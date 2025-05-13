@@ -212,6 +212,11 @@
                   <div class="form-group">
                     <label for="message-content">Message</label>
                     <textarea class="form-control" id="message-content" rows="3" required></textarea>
+                    <small class="form-text text-muted">
+                      For DingTalk: Use @13800138000 to mention specific users by phone number, or @all to mention everyone.<br>
+                      For Telegram: Use @username to mention specific users (5-32 characters, only letters, numbers, underscores) or @all for a general announcement.
+                    </small>
+                    <div class="message-preview" id="message-preview"></div>
                   </div>
                   <button type="submit" class="btn btn-primary">Send Message</button>
                 </form>
@@ -248,5 +253,151 @@
 <!-- Custom JS -->
 <script src="/static/js/script.js"></script>
 
+<script>
+$(document).ready(function() {
+  // Highlight nav item
+  $('#nav-dashboard').addClass('active');
+  
+  // Load dashboard data
+  loadDashboardData();
+  
+  // Load recent messages
+  loadRecentMessages();
+  
+  // Load bots for quick send
+  loadBots();
+  
+  // Message content live preview with mention highlighting
+  $('#message-content').on('input', function() {
+    updateMessagePreview();
+  });
+  
+  // Format change updates preview
+  $('#message-format').on('change', function() {
+    updateMessagePreview();
+  });
+});
+
+// Update message preview with highlighted mentions
+function updateMessagePreview() {
+  const content = $('#message-content').val();
+  const botSelect = $('#bot-select');
+  const botType = botSelect.find('option:selected').text().includes('telegram') ? 'telegram' : 'dingtalk';
+  
+  if (!content) {
+    $('#message-preview').empty();
+    return;
+  }
+  
+  // Highlight mentions in preview
+  let formattedContent = content;
+  
+  // Highlight @all mentions
+  formattedContent = formattedContent.replace(/@all\b/g, '<span class="mention-all">@all</span>');
+  
+  if (botType === 'telegram') {
+    // Highlight Telegram username mentions (@username)
+    formattedContent = formattedContent.replace(/@([a-zA-Z0-9_]{5,32})\b/g, '<span class="mention-telegram">@$1</span>');
+    
+    // Highlight phone number mentions for Telegram
+    formattedContent = formattedContent.replace(/@(\d{10,15})\b/g, '<span class="mention-phone">@$1</span>');
+  } else {
+    // Highlight DingTalk phone number mentions (@12345678901)
+    formattedContent = formattedContent.replace(/@(\d+)/g, '<span class="mention">@$1</span>');
+  }
+  
+  $('#message-preview').html(formattedContent);
+}
+
+function loadDashboardData() {
+  $.ajax({
+    url: '/api/dashboard',
+    method: 'GET',
+    success: function(data) {
+      $('#total-bots').text(data.total_bots || 0);
+      $('#total-messages-sent').text(data.messages_sent || 0);
+      $('#total-messages-pending').text(data.messages_pending || 0);
+      $('#total-messages-failed').text(data.messages_failed || 0);
+    },
+    error: function() {
+      console.error('Failed to load dashboard data');
+    }
+  });
+}
+
+function loadRecentMessages() {
+  $.ajax({
+    url: '/api/messages/recent',
+    method: 'GET',
+    success: function(messages) {
+      const tbody = $('#recent-messages');
+      tbody.empty();
+      
+      if (messages && messages.length > 0) {
+        messages.forEach(function(message) {
+          let statusBadge = '';
+          if (message.status === 'sent') {
+            statusBadge = '<span class="badge badge-success">Sent</span>';
+          } else if (message.status === 'failed') {
+            statusBadge = '<span class="badge badge-danger">Failed</span>';
+          } else if (message.status === 'pending') {
+            statusBadge = '<span class="badge badge-warning">Pending</span>';
+          } else {
+            statusBadge = '<span class="badge badge-secondary">' + message.status + '</span>';
+          }
+          
+          const sentAt = message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A';
+          
+          tbody.append(`
+            <tr>
+              <td>${message.bot.name}</td>
+              <td>${statusBadge}</td>
+              <td>${sentAt}</td>
+              <td>
+                <button class="btn btn-sm btn-info" onclick="viewMessageDetails(${message.id})">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+          `);
+        });
+      } else {
+        tbody.append('<tr><td colspan="4" class="text-center">No recent messages</td></tr>');
+      }
+    },
+    error: function() {
+      console.error('Failed to load recent messages');
+    }
+  });
+}
+
+function loadBots() {
+  $.ajax({
+    url: '/api/bots',
+    method: 'GET',
+    success: function(bots) {
+      const botSelect = $('#bot-select');
+      botSelect.empty();
+      
+      if (bots && bots.length > 0) {
+        bots.forEach(function(bot) {
+          if (bot.is_active) {
+            botSelect.append(`<option value="${bot.id}">${bot.name} (${bot.type})</option>`);
+          }
+        });
+      } else {
+        botSelect.append('<option value="" disabled>No active bots found</option>');
+      }
+    },
+    error: function() {
+      console.error('Failed to load bots');
+    }
+  });
+}
+
+function viewMessageDetails(id) {
+  window.location.href = '/messages?id=' + id;
+}
+</script>
 </body>
 </html> 

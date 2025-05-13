@@ -120,6 +120,7 @@
                       <th>Type</th>
                       <th>Content</th>
                       <th>Format</th>
+                      <th>Mentions</th>
                       <th>Status</th>
                       <th>Created At</th>
                       <th>Actions</th>
@@ -174,6 +175,11 @@
             <div class="form-group">
               <label for="message-content">Message Content</label>
               <textarea class="form-control" id="message-content" rows="5" placeholder="Enter message content" required></textarea>
+              <small class="form-text text-muted">
+                For DingTalk: Use @13800138000 to mention specific users by phone number, or @all to mention everyone.<br>
+                For Telegram: Use @username to mention specific users (5-32 characters, only letters, numbers, underscores) or @all for a general announcement.
+              </small>
+              <div class="message-preview" id="message-preview"></div>
             </div>
           </form>
         </div>
@@ -231,6 +237,10 @@
             <label>Content</label>
             <div id="detail-content" class="p-3 bg-light rounded"></div>
           </div>
+          <div class="form-group" id="detail-mentions-container">
+            <label>Mentions</label>
+            <p id="detail-mentions" class="form-control-static"></p>
+          </div>
           <div class="form-group" id="detail-error-container" style="display:none;">
             <label>Error</label>
             <div id="detail-error" class="p-3 bg-danger rounded"></div>
@@ -282,13 +292,14 @@
       responsive: true,
       lengthChange: true,
       autoWidth: false,
-      order: [[6, 'desc']], // 按创建时间降序排序
+      order: [[7, 'desc']], // 按创建时间降序排序
       columns: [
         { data: 'id' },
         { data: 'bot.name', defaultContent: 'Unknown' },
         { data: 'bot.type', defaultContent: '-' },
         { data: 'content' },
         { data: 'format', defaultContent: 'text' },
+        { data: 'mentions', defaultContent: '-' },
         { data: 'status' },
         { data: 'created_at' },
         { data: null, defaultContent: '', orderable: false }
@@ -314,6 +325,14 @@
       } else {
         $('#format-help').hide();
       }
+      
+      // Update preview when format changes
+      updateMessagePreview();
+    });
+    
+    // Message content live preview with mention highlighting
+    $('#message-content').on('input', function() {
+      updateMessagePreview();
     });
     
     // Trigger initial state
@@ -356,6 +375,22 @@
             
             // Format status with badge
             processedMsg.status = statusBadge;
+            
+            // Format mentions with badges
+            if (message.mentions && message.mentions.length > 0) {
+              const mentions = message.mentions.split(',');
+              if (mentions.includes('all')) {
+                processedMsg.mentions = '<span class="badge badge-danger">@all</span>';
+              } else if (mentions.length <= 2) {
+                processedMsg.mentions = mentions.map(m => 
+                  '<span class="badge badge-info">@' + m + '</span>'
+                ).join(' ');
+              } else {
+                processedMsg.mentions = '<span class="badge badge-info">' + mentions.length + ' users</span>';
+              }
+            } else {
+              processedMsg.mentions = '-';
+            }
             
             // Format date
             processedMsg.created_at = new Date(message.created_at).toLocaleString();
@@ -474,6 +509,14 @@
         $('#detail-sent-at').text(message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A');
         $('#detail-content').text(message.content);
         
+        // 显示@提及的用户
+        if (message.mentions && message.mentions.length > 0) {
+          $('#detail-mentions').html(formatMentions(message.mentions));
+          $('#detail-mentions-container').show();
+        } else {
+          $('#detail-mentions-container').hide();
+        }
+        
         // 显示错误信息（如果有）
         if (message.error) {
           $('#detail-error').text(message.error);
@@ -488,6 +531,20 @@
         alert('Failed to load message details: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
       }
     });
+  }
+  
+  // 格式化提及的用户
+  function formatMentions(mentions) {
+    if (!mentions) return 'None';
+    
+    const mentionsList = mentions.split(',');
+    if (mentionsList.includes('all')) {
+      return '<strong class="text-danger">@all</strong> (everyone)';
+    }
+    
+    return mentionsList.map(mention => {
+      return '<span class="badge badge-info">@' + mention + '</span>';
+    }).join(' ');
   }
   
   // 重试当前查看的消息
@@ -540,6 +597,37 @@
         }
       });
     }
+  }
+  
+  // Update message preview with highlighted mentions
+  function updateMessagePreview() {
+    const content = $('#message-content').val();
+    const botSelect = $('#message-bot');
+    const botType = botSelect.find('option:selected').text().includes('telegram') ? 'telegram' : 'dingtalk';
+    
+    if (!content) {
+      $('#message-preview').empty();
+      return;
+    }
+    
+    // Highlight mentions in preview
+    let formattedContent = content;
+    
+    // Highlight @all mentions
+    formattedContent = formattedContent.replace(/@all\b/g, '<span class="mention-all">@all</span>');
+    
+    if (botType === 'telegram') {
+      // Highlight Telegram username mentions (@username)
+      formattedContent = formattedContent.replace(/@([a-zA-Z0-9_]{5,32})\b/g, '<span class="mention-telegram">@$1</span>');
+      
+      // Highlight phone number mentions for Telegram
+      formattedContent = formattedContent.replace(/@(\d{10,15})\b/g, '<span class="mention-phone">@$1</span>');
+    } else {
+      // Highlight DingTalk phone number mentions (@12345678901)
+      formattedContent = formattedContent.replace(/@(\d+)/g, '<span class="mention">@$1</span>');
+    }
+    
+    $('#message-preview').html(formattedContent);
   }
 </script>
 </body>

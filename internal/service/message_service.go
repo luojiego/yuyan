@@ -2,6 +2,8 @@ package service
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 	"time"
 
 	"yuyan/internal/bot"
@@ -57,6 +59,22 @@ func (s *MessageService) GetMessageByID(id uint) (*models.Message, error) {
 	return &message, nil
 }
 
+// extractMentions parses @mentions from a message and returns them as a comma-separated string
+func extractMentions(content string) string {
+	re := regexp.MustCompile(`@([\w\d]+)`)
+	matches := re.FindAllStringSubmatch(content, -1)
+
+	mentions := make([]string, 0)
+
+	for _, match := range matches {
+		if len(match) > 1 && match[1] != "all" {
+			mentions = append(mentions, match[1])
+		}
+	}
+
+	return strings.Join(mentions, ",")
+}
+
 // SendMessage sends a message through the specified bot
 func (s *MessageService) SendMessage(botID uint, content string, format string) (*models.Message, error) {
 	// Get bot configuration
@@ -65,12 +83,16 @@ func (s *MessageService) SendMessage(botID uint, content string, format string) 
 		return nil, fmt.Errorf("failed to get bot: %w", err)
 	}
 
+	// Extract mentions from the content
+	mentions := extractMentions(content)
+
 	// Create message record
 	message := models.Message{
-		BotID:   botID,
-		Content: content,
-		Status:  models.MessageStatusProcessing,
-		Format:  format,
+		BotID:    botID,
+		Content:  content,
+		Status:   models.MessageStatusProcessing,
+		Format:   format,
+		Mentions: mentions,
 	}
 
 	// Save message to database

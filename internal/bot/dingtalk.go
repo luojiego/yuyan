@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -42,6 +43,43 @@ func NewDingTalkBot(bot models.Bot) *DingTalkBot {
 	}
 }
 
+// parseMentions extracts @mention information from a message
+// Returns:
+// - processedMessage: the message with @mentions properly formatted
+// - mobiles: list of mobile numbers to be mentioned
+// - isAtAll: whether @all was mentioned
+func parseMentions(message string) (string, []string, bool) {
+	// Check for @all mention
+	isAtAll := strings.Contains(message, "@all")
+
+	// Regular expression to find @mentions
+	// Matches patterns like @13800138000 or @user
+	re := regexp.MustCompile(`@([\w\d]+)`)
+	matches := re.FindAllStringSubmatch(message, -1)
+
+	mobiles := make([]string, 0)
+
+	// Process each match
+	for _, match := range matches {
+		if len(match) > 1 {
+			mention := match[1]
+			// Skip "all" as it's handled separately
+			if mention == "all" {
+				continue
+			}
+
+			// If the mention looks like a phone number (all digits), add it to mobiles
+			if regexp.MustCompile(`^\d+$`).MatchString(mention) {
+				mobiles = append(mobiles, mention)
+			}
+			// Note: For userIds, we would need to handle them differently
+			// but DingTalk primarily uses phone numbers for mentions
+		}
+	}
+
+	return message, mobiles, isAtAll
+}
+
 // Send sends a message through the DingTalk bot
 func (d *DingTalkBot) Send(message string) error {
 	// Validate webhook URL
@@ -55,13 +93,16 @@ func (d *DingTalkBot) Send(message string) error {
 		return fmt.Errorf("invalid webhook URL: %w", err)
 	}
 
+	// Parse mentions from the message
+	processedMessage, mobiles, isAtAll := parseMentions(message)
+
 	// Check if message is in markdown format (starts with # or contains ** or __)
 	isMarkdown := false
-	if len(message) > 0 && (message[0] == '#' ||
-		contains(message, "**") ||
-		contains(message, "__") ||
-		contains(message, "```") ||
-		contains(message, ">")) {
+	if len(processedMessage) > 0 && (processedMessage[0] == '#' ||
+		contains(processedMessage, "**") ||
+		contains(processedMessage, "__") ||
+		contains(processedMessage, "```") ||
+		contains(processedMessage, ">")) {
 		isMarkdown = true
 	}
 
@@ -72,21 +113,20 @@ func (d *DingTalkBot) Send(message string) error {
 		msg.MsgType = "markdown"
 		msg.Markdown = map[string]string{
 			"title": "Notification",
-			"text":  message,
+			"text":  processedMessage,
 		}
 	} else {
 		msg.MsgType = "text"
 		msg.Text = map[string]string{
-			"content": message,
+			"content": processedMessage,
 		}
 	}
 
-	// Add at configuration if needed
-	// This could be enhanced to parse @mentions from the message
-	// msg.At = map[string]interface{}{
-	//    "atMobiles": []string{},
-	//    "isAtAll": false,
-	// }
+	// Add at configuration
+	msg.At = map[string]interface{}{
+		"atMobiles": mobiles,
+		"isAtAll":   isAtAll,
+	}
 
 	// Convert message to JSON
 	msgBytes, err := json.Marshal(msg)

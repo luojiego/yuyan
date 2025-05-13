@@ -69,4 +69,73 @@
     display: block;
     float: none !important;
   }
+}
+
+/* Mention Styling */
+.mention {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-weight: bold;
+}
+
+.mention-all {
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-weight: bold;
+}
+
+/* Telegram specific mention styles */
+.mention-telegram {
+  background-color: #eeffde;
+  color: #0088cc;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-weight: bold;
+}
+
+.mention-phone {
+  background-color: #f0f4c3;
+  color: #827717;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-weight: bold;
+}
+
+/* Message Status Badges */
+.badge-status-sent {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-status-failed {
+  background-color: #dc3545;
+  color: white;
+}
+
+.badge-status-pending {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+/* General Styles */
+.message-preview {
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.mentions-helper {
+  border-top: 1px solid #e9ecef;
+  padding-top: 8px;
+  margin-top: 8px;
+  font-size: 0.875rem;
+  color: #6c757d;
 } 

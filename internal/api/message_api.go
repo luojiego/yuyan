@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"yuyan/internal/database"
 	"yuyan/internal/models"
 	"yuyan/internal/service"
 
@@ -20,6 +21,14 @@ type MessageRequest struct {
 	BotID   uint   `json:"bot_id" binding:"required"`
 	Content string `json:"content" binding:"required"`
 	Format  string `json:"format"`
+}
+
+// DashboardStats represents statistics for the dashboard
+type DashboardStats struct {
+	TotalBots       int64 `json:"total_bots"`
+	MessagesSent    int64 `json:"messages_sent"`
+	MessagesPending int64 `json:"messages_pending"`
+	MessagesFailed  int64 `json:"messages_failed"`
 }
 
 // NewMessageAPI creates a new MessageAPI handler
@@ -59,6 +68,35 @@ func (api *MessageAPI) GetAllMessages(c *gin.Context) {
 	c.JSON(http.StatusOK, messages)
 }
 
+// GetRecentMessages handles GET /api/messages/recent
+func (api *MessageAPI) GetRecentMessages(c *gin.Context) {
+	// Get recent messages (limit to 10)
+	var messages []models.Message
+	result := database.DB.Preload("Bot").Order("created_at desc").Limit(10).Find(&messages)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, messages)
+}
+
+// GetDashboardStats handles GET /api/dashboard
+func (api *MessageAPI) GetDashboardStats(c *gin.Context) {
+	// Initialize stats
+	stats := DashboardStats{}
+
+	// Count total active bots
+	database.DB.Model(&models.Bot{}).Where("is_active = ?", true).Count(&stats.TotalBots)
+
+	// Count messages by status
+	database.DB.Model(&models.Message{}).Where("status = ?", models.MessageStatusSent).Count(&stats.MessagesSent)
+	database.DB.Model(&models.Message{}).Where("status = ?", models.MessageStatusPending).Count(&stats.MessagesPending)
+	database.DB.Model(&models.Message{}).Where("status = ?", models.MessageStatusFailed).Count(&stats.MessagesFailed)
+
+	c.JSON(http.StatusOK, stats)
+}
+
 // GetMessageByID handles GET /api/messages/:id
 func (api *MessageAPI) GetMessageByID(c *gin.Context) {
 	idStr := c.Param("id")
@@ -74,7 +112,22 @@ func (api *MessageAPI) GetMessageByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, message)
+	// Format response for better frontend compatibility
+	response := gin.H{
+		"id":         message.ID,
+		"bot_id":     message.BotID,
+		"bot_name":   message.Bot.Name,
+		"bot_type":   message.Bot.Type,
+		"content":    message.Content,
+		"format":     message.Format,
+		"mentions":   message.Mentions,
+		"status":     message.Status,
+		"error":      message.Error,
+		"sent_at":    message.SentAt,
+		"created_at": message.CreatedAt,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // SendMessage handles POST /api/messages

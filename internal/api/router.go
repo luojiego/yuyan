@@ -31,9 +31,13 @@ func SetupRouter(r *gin.Engine) {
 
 		// Message endpoints
 		api.GET("/messages", messageAPI.GetAllMessages)
+		api.GET("/messages/recent", messageAPI.GetRecentMessages)
 		api.GET("/messages/:id", messageAPI.GetMessageByID)
 		api.POST("/messages", messageAPI.SendMessage)
 		api.DELETE("/messages/:id", messageAPI.DeleteMessage)
+
+		// Dashboard endpoint
+		api.GET("/dashboard", messageAPI.GetDashboardStats)
 
 		// Config endpoints
 		api.GET("/config", configAPI.GetConfig)
