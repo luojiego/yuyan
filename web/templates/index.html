@@ -1,0 +1,238 @@
+{{ define "content" }}
+<div class="row">
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-info">
+      <div class="inner">
+        <h3 id="total-bots">0</h3>
+        <p>Total Bots</p>
+      </div>
+      <div class="icon">
+        <i class="fas fa-robot"></i>
+      </div>
+      <a href="/bots" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-success">
+      <div class="inner">
+        <h3 id="total-messages-sent">0</h3>
+        <p>Messages Sent</p>
+      </div>
+      <div class="icon">
+        <i class="fas fa-paper-plane"></i>
+      </div>
+      <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-warning">
+      <div class="inner">
+        <h3 id="total-messages-pending">0</h3>
+        <p>Messages Pending</p>
+      </div>
+      <div class="icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-danger">
+      <div class="inner">
+        <h3 id="total-messages-failed">0</h3>
+        <p>Messages Failed</p>
+      </div>
+      <div class="icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <!-- ./col -->
+</div>
+<!-- /.row -->
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Recent Messages</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Bot</th>
+              <th>Status</th>
+              <th>Sent At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recent-messages">
+            <!-- Data will be loaded dynamically -->
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- /.col-md-6 -->
+  
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Quick Send Message</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <form id="quick-send-form">
+          <div class="form-group">
+            <label for="bot-select">Select Bot</label>
+            <select class="form-control" id="bot-select" required>
+              <!-- Bot options will be loaded dynamically -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message-content">Message</label>
+            <textarea class="form-control" id="message-content" rows="3" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- /.col-md-6 -->
+</div>
+<!-- /.row -->
+{{ end }}
+
+{{ define "scripts" }}
+<script>
+  $(document).ready(function() {
+    // Load dashboard data
+    loadDashboardData();
+    
+    // Set up form submission
+    $('#quick-send-form').on('submit', function(e) {
+      e.preventDefault();
+      sendQuickMessage();
+    });
+    
+    // Reload data every 30 seconds
+    setInterval(loadDashboardData, 30000);
+  });
+  
+  function loadDashboardData() {
+    // Load bot count
+    $.ajax({
+      url: '/api/bots',
+      method: 'GET',
+      success: function(response) {
+        $('#total-bots').text(response.length);
+        
+        // Populate bot select
+        $('#bot-select').empty();
+        if (response.length === 0) {
+          $('#bot-select').append('<option value="">No bots available</option>');
+        } else {
+          response.forEach(function(bot) {
+            if (bot.is_active) {
+              $('#bot-select').append(`<option value="${bot.id}">${bot.name} (${bot.type})</option>`);
+            }
+          });
+        }
+      }
+    });
+    
+    // Load message statistics
+    $.ajax({
+      url: '/api/messages',
+      method: 'GET',
+      success: function(response) {
+        let sentCount = 0;
+        let pendingCount = 0;
+        let failedCount = 0;
+        
+        response.forEach(function(message) {
+          if (message.status === 'sent') {
+            sentCount++;
+          } else if (message.status === 'pending' || message.status === 'processing') {
+            pendingCount++;
+          } else if (message.status === 'failed') {
+            failedCount++;
+          }
+        });
+        
+        $('#total-messages-sent').text(sentCount);
+        $('#total-messages-pending').text(pendingCount);
+        $('#total-messages-failed').text(failedCount);
+        
+        // Populate recent messages table
+        $('#recent-messages').empty();
+        const recentMessages = response.slice(0, 5); // Get 5 most recent messages
+        recentMessages.forEach(function(message) {
+          const sentAt = message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A';
+          const statusClass = message.status === 'sent' ? 'success' : 
+                              message.status === 'failed' ? 'danger' : 'warning';
+          
+          $('#recent-messages').append(`
+            <tr>
+              <td>${message.bot.name}</td>
+              <td><span class="badge badge-${statusClass}">${message.status}</span></td>
+              <td>${sentAt}</td>
+              <td>
+                <a href="/messages?id=${message.id}" class="btn btn-sm btn-info">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </td>
+            </tr>
+          `);
+        });
+        
+        if (recentMessages.length === 0) {
+          $('#recent-messages').append('<tr><td colspan="4" class="text-center">No messages yet</td></tr>');
+        }
+      }
+    });
+  }
+  
+  function sendQuickMessage() {
+    const botId = $('#bot-select').val();
+    const content = $('#message-content').val();
+    
+    if (!botId || !content) {
+      alert('Please select a bot and enter a message');
+      return;
+    }
+    
+    $.ajax({
+      url: '/api/messages',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        bot_id: parseInt(botId),
+        content: content
+      }),
+      success: function(response) {
+        $('#message-content').val('');
+        alert('Message sent successfully!');
+        loadDashboardData(); // Reload data to show new message
+      },
+      error: function(xhr) {
+        alert('Failed to send message: ' + xhr.responseJSON.error);
+      }
+    });
+  }
+</script>
+{{ end }} 

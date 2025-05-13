@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  mode: debug
+
+database:
+  type: sqlite # sqlite, mysql, postgres
+  sqlite:
+    path: ./data/yuyan.db
+  mysql:
+    host: localhost
+    port: 3306
+    username: root
+    password: password
+    dbname: yuyan
+    params: charset=utf8mb4&parseTime=True&loc=Local
+  postgres:
+    host: localhost
+    port: 5432
+    username: postgres
+    password: password
+    dbname: yuyan
+    sslmode: disable 
