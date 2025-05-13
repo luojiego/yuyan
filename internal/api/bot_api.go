@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"yuyan/internal/models"
@@ -81,6 +82,14 @@ func (api *BotAPI) CreateBot(c *gin.Context) {
 		return
 	}
 
+	// Validate webhook URL if provided
+	if req.WebhookURL != "" {
+		if _, err := url.Parse(req.WebhookURL); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid webhook URL: " + err.Error()})
+			return
+		}
+	}
+
 	bot := models.Bot{
 		Name:        req.Name,
 		Type:        models.BotType(req.Type),
@@ -113,6 +122,14 @@ func (api *BotAPI) UpdateBot(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Validate webhook URL if provided
+	if req.WebhookURL != "" {
+		if _, err := url.Parse(req.WebhookURL); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid webhook URL: " + err.Error()})
+			return
+		}
 	}
 
 	// Get existing bot

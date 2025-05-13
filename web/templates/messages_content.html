@@ -1,0 +1,610 @@
+{{ define "content" }}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Message History</h3>
+        <div class="card-tools">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#message-modal">
+            <i class="fas fa-paper-plane"></i> Send New Message
+          </button>
+        </div>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <ul class="nav nav-tabs" id="message-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="all-messages-tab" data-toggle="tab" href="#all-messages" role="tab">All Messages</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="dingtalk-messages-tab" data-toggle="tab" href="#dingtalk-messages" role="tab">DingTalk</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="telegram-messages-tab" data-toggle="tab" href="#telegram-messages" role="tab">Telegram</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="sent-messages-tab" data-toggle="tab" href="#sent-messages" role="tab">Sent</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="pending-messages-tab" data-toggle="tab" href="#pending-messages" role="tab">Pending</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="failed-messages-tab" data-toggle="tab" href="#failed-messages" role="tab">Failed</a>
+          </li>
+        </ul>
+        <div class="tab-content mt-3" id="message-tabs-content">
+          <div class="tab-pane fade show active" id="all-messages" role="tabpanel">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Bot</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Content</th>
+                  <th>Sent At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="all-messages-table">
+                <!-- Data will be loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="dingtalk-messages" role="tabpanel">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Bot</th>
+                  <th>Status</th>
+                  <th>Content</th>
+                  <th>Sent At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dingtalk-messages-table">
+                <!-- Data will be loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="telegram-messages" role="tabpanel">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Bot</th>
+                  <th>Status</th>
+                  <th>Content</th>
+                  <th>Sent At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="telegram-messages-table">
+                <!-- Data will be loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="sent-messages" role="tabpanel">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Bot</th>
+                  <th>Type</th>
+                  <th>Content</th>
+                  <th>Sent At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="sent-messages-table">
+                <!-- Data will be loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="pending-messages" role="tabpanel">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Bot</th>
+                  <th>Type</th>
+                  <th>Content</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pending-messages-table">
+                <!-- Data will be loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="failed-messages" role="tabpanel">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Bot</th>
+                  <th>Type</th>
+                  <th>Content</th>
+                  <th>Error</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="failed-messages-table">
+                <!-- Data will be loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- /.col -->
+</div>
+<!-- /.row -->
+
+<!-- Message Modal -->
+<div class="modal fade" id="message-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Send Message</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="message-form">
+          <div class="form-group">
+            <label for="message-bot-select">Select Bot</label>
+            <select class="form-control" id="message-bot-select" required>
+              <!-- Bot options will be loaded dynamically -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message-content">Message</label>
+            <textarea class="form-control" id="message-content" rows="5" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="send-message">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Message Details Modal -->
+<div class="modal fade" id="message-details-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Message Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>ID:</strong> <span id="detail-id"></span></p>
+            <p><strong>Bot:</strong> <span id="detail-bot"></span></p>
+            <p><strong>Status:</strong> <span id="detail-status"></span></p>
+            <p><strong>Created At:</strong> <span id="detail-created"></span></p>
+            <p><strong>Sent At:</strong> <span id="detail-sent"></span></p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Bot Type:</strong> <span id="detail-type"></span></p>
+            <p><strong>Error:</strong> <span id="detail-error"></span></p>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Message Content</h3>
+              </div>
+              <div class="card-body">
+                <pre id="detail-content" class="p-2" style="max-height: 300px; overflow-y: auto; background-color: #f8f9fa; border-radius: 3px;"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="retry-message">Retry</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+<script>
+  $(document).ready(function() {
+    // Load messages data
+    loadMessagesData();
+    
+    // Load bot options for send message form
+    loadBotOptions();
+    
+    // Set up send button
+    $('#send-message').on('click', function() {
+      sendMessage();
+    });
+    
+    // Reset form when modal is closed
+    $('#message-modal').on('hidden.bs.modal', function() {
+      $('#message-form')[0].reset();
+    });
+    
+    // Set up retry button
+    $('#retry-message').on('click', function() {
+      const messageId = $('#detail-id').text();
+      retryMessage(messageId);
+    });
+    
+    // Reload data every 30 seconds
+    setInterval(loadMessagesData, 30000);
+  });
+  
+  function loadMessagesData() {
+    $.ajax({
+      url: '/api/messages',
+      method: 'GET',
+      success: function(response) {
+        // Clear tables
+        $('#all-messages-table').empty();
+        $('#dingtalk-messages-table').empty();
+        $('#telegram-messages-table').empty();
+        $('#sent-messages-table').empty();
+        $('#pending-messages-table').empty();
+        $('#failed-messages-table').empty();
+        
+        if (response.length === 0) {
+          const noMessagesRow = '<tr><td colspan="7" class="text-center">No messages found</td></tr>';
+          $('#all-messages-table').append(noMessagesRow);
+          $('#dingtalk-messages-table').append('<tr><td colspan="6" class="text-center">No messages found</td></tr>');
+          $('#telegram-messages-table').append('<tr><td colspan="6" class="text-center">No messages found</td></tr>');
+          $('#sent-messages-table').append('<tr><td colspan="6" class="text-center">No messages found</td></tr>');
+          $('#pending-messages-table').append('<tr><td colspan="6" class="text-center">No messages found</td></tr>');
+          $('#failed-messages-table').append('<tr><td colspan="6" class="text-center">No messages found</td></tr>');
+          return;
+        }
+        
+        // Filter arrays for each category
+        const dingtalkMessages = response.filter(msg => msg.bot.type === 'dingtalk');
+        const telegramMessages = response.filter(msg => msg.bot.type === 'telegram');
+        const sentMessages = response.filter(msg => msg.status === 'sent');
+        const pendingMessages = response.filter(msg => msg.status === 'pending' || msg.status === 'processing');
+        const failedMessages = response.filter(msg => msg.status === 'failed');
+        
+        // Populate tables
+        populateAllMessagesTable(response);
+        populateTypeMessagesTable(dingtalkMessages, 'dingtalk-messages-table');
+        populateTypeMessagesTable(telegramMessages, 'telegram-messages-table');
+        populateSentMessagesTable(sentMessages);
+        populatePendingMessagesTable(pendingMessages);
+        populateFailedMessagesTable(failedMessages);
+      }
+    });
+  }
+  
+  function loadBotOptions() {
+    $.ajax({
+      url: '/api/bots',
+      method: 'GET',
+      success: function(response) {
+        $('#message-bot-select').empty();
+        
+        if (response.length === 0) {
+          $('#message-bot-select').append('<option value="">No bots available</option>');
+          return;
+        }
+        
+        response.forEach(function(bot) {
+          if (bot.is_active) {
+            $('#message-bot-select').append(`<option value="${bot.id}">${bot.name} (${bot.type})</option>`);
+          }
+        });
+      }
+    });
+  }
+  
+  function populateAllMessagesTable(messages) {
+    messages.forEach(function(message) {
+      const sentAt = message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A';
+      const statusClass = message.status === 'sent' ? 'success' : 
+                        message.status === 'failed' ? 'danger' : 'warning';
+      const content = truncateText(message.content, 50);
+      
+      $('#all-messages-table').append(`
+        <tr>
+          <td>${message.id}</td>
+          <td>${message.bot.name}</td>
+          <td>${message.bot.type}</td>
+          <td><span class="badge badge-${statusClass}">${message.status}</span></td>
+          <td>${content}</td>
+          <td>${sentAt}</td>
+          <td>
+            <button class="btn btn-sm btn-info view-message" data-id="${message.id}">
+              <i class="fas fa-eye"></i>
+            </button>
+            ${message.status === 'failed' ? `
+              <button class="btn btn-sm btn-warning retry-message" data-id="${message.id}">
+                <i class="fas fa-redo"></i>
+              </button>
+            ` : ''}
+          </td>
+        </tr>
+      `);
+    });
+    
+    // Set up action buttons
+    $('.view-message').on('click', function() {
+      const messageId = $(this).data('id');
+      viewMessageDetails(messageId);
+    });
+    
+    $('.retry-message').on('click', function() {
+      const messageId = $(this).data('id');
+      retryMessage(messageId);
+    });
+  }
+  
+  function populateTypeMessagesTable(messages, tableId) {
+    if (messages.length === 0) {
+      $(`#${tableId}`).append('<tr><td colspan="6" class="text-center">No messages found</td></tr>');
+      return;
+    }
+    
+    messages.forEach(function(message) {
+      const sentAt = message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A';
+      const statusClass = message.status === 'sent' ? 'success' : 
+                        message.status === 'failed' ? 'danger' : 'warning';
+      const content = truncateText(message.content, 50);
+      
+      $(`#${tableId}`).append(`
+        <tr>
+          <td>${message.id}</td>
+          <td>${message.bot.name}</td>
+          <td><span class="badge badge-${statusClass}">${message.status}</span></td>
+          <td>${content}</td>
+          <td>${sentAt}</td>
+          <td>
+            <button class="btn btn-sm btn-info view-message" data-id="${message.id}">
+              <i class="fas fa-eye"></i>
+            </button>
+            ${message.status === 'failed' ? `
+              <button class="btn btn-sm btn-warning retry-message" data-id="${message.id}">
+                <i class="fas fa-redo"></i>
+              </button>
+            ` : ''}
+          </td>
+        </tr>
+      `);
+    });
+    
+    // Set up action buttons
+    $(`#${tableId} .view-message`).on('click', function() {
+      const messageId = $(this).data('id');
+      viewMessageDetails(messageId);
+    });
+    
+    $(`#${tableId} .retry-message`).on('click', function() {
+      const messageId = $(this).data('id');
+      retryMessage(messageId);
+    });
+  }
+  
+  function populateSentMessagesTable(messages) {
+    if (messages.length === 0) {
+      $('#sent-messages-table').append('<tr><td colspan="6" class="text-center">No sent messages found</td></tr>');
+      return;
+    }
+    
+    messages.forEach(function(message) {
+      const sentAt = message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A';
+      const content = truncateText(message.content, 50);
+      
+      $('#sent-messages-table').append(`
+        <tr>
+          <td>${message.id}</td>
+          <td>${message.bot.name}</td>
+          <td>${message.bot.type}</td>
+          <td>${content}</td>
+          <td>${sentAt}</td>
+          <td>
+            <button class="btn btn-sm btn-info view-message" data-id="${message.id}">
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      `);
+    });
+    
+    // Set up action buttons
+    $('#sent-messages-table .view-message').on('click', function() {
+      const messageId = $(this).data('id');
+      viewMessageDetails(messageId);
+    });
+  }
+  
+  function populatePendingMessagesTable(messages) {
+    if (messages.length === 0) {
+      $('#pending-messages-table').append('<tr><td colspan="6" class="text-center">No pending messages found</td></tr>');
+      return;
+    }
+    
+    messages.forEach(function(message) {
+      const createdAt = new Date(message.created_at).toLocaleString();
+      const content = truncateText(message.content, 50);
+      
+      $('#pending-messages-table').append(`
+        <tr>
+          <td>${message.id}</td>
+          <td>${message.bot.name}</td>
+          <td>${message.bot.type}</td>
+          <td>${content}</td>
+          <td>${createdAt}</td>
+          <td>
+            <button class="btn btn-sm btn-info view-message" data-id="${message.id}">
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      `);
+    });
+    
+    // Set up action buttons
+    $('#pending-messages-table .view-message').on('click', function() {
+      const messageId = $(this).data('id');
+      viewMessageDetails(messageId);
+    });
+  }
+  
+  function populateFailedMessagesTable(messages) {
+    if (messages.length === 0) {
+      $('#failed-messages-table').append('<tr><td colspan="6" class="text-center">No failed messages found</td></tr>');
+      return;
+    }
+    
+    messages.forEach(function(message) {
+      const content = truncateText(message.content, 50);
+      const error = truncateText(message.error || 'Unknown error', 50);
+      
+      $('#failed-messages-table').append(`
+        <tr>
+          <td>${message.id}</td>
+          <td>${message.bot.name}</td>
+          <td>${message.bot.type}</td>
+          <td>${content}</td>
+          <td>${error}</td>
+          <td>
+            <button class="btn btn-sm btn-info view-message" data-id="${message.id}">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn btn-sm btn-warning retry-message" data-id="${message.id}">
+              <i class="fas fa-redo"></i>
+            </button>
+          </td>
+        </tr>
+      `);
+    });
+    
+    // Set up action buttons
+    $('#failed-messages-table .view-message').on('click', function() {
+      const messageId = $(this).data('id');
+      viewMessageDetails(messageId);
+    });
+    
+    $('#failed-messages-table .retry-message').on('click', function() {
+      const messageId = $(this).data('id');
+      retryMessage(messageId);
+    });
+  }
+  
+  function viewMessageDetails(messageId) {
+    $.ajax({
+      url: `/api/messages/${messageId}`,
+      method: 'GET',
+      success: function(message) {
+        $('#detail-id').text(message.id);
+        $('#detail-bot').text(message.bot.name);
+        $('#detail-type').text(message.bot.type);
+        
+        const statusClass = message.status === 'sent' ? 'success' : 
+                          message.status === 'failed' ? 'danger' : 'warning';
+        $('#detail-status').html(`<span class="badge badge-${statusClass}">${message.status}</span>`);
+        
+        $('#detail-created').text(new Date(message.created_at).toLocaleString());
+        $('#detail-sent').text(message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A');
+        $('#detail-error').text(message.error || 'N/A');
+        $('#detail-content').text(message.content);
+        
+        // Show/hide retry button based on message status
+        if (message.status === 'failed') {
+          $('#retry-message').show();
+        } else {
+          $('#retry-message').hide();
+        }
+        
+        $('#message-details-modal').modal('show');
+      },
+      error: function() {
+        alert('Failed to load message details');
+      }
+    });
+  }
+  
+  function sendMessage() {
+    const botId = $('#message-bot-select').val();
+    const content = $('#message-content').val();
+    
+    if (!botId || !content) {
+      alert('Please select a bot and enter a message');
+      return;
+    }
+    
+    $.ajax({
+      url: '/api/messages',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        bot_id: parseInt(botId),
+        content: content
+      }),
+      success: function() {
+        $('#message-modal').modal('hide');
+        $('#message-form')[0].reset();
+        loadMessagesData();
+        alert('Message sent successfully!');
+      },
+      error: function(xhr) {
+        alert('Failed to send message: ' + xhr.responseJSON.error);
+      }
+    });
+  }
+  
+  function retryMessage(messageId) {
+    // For simplicity, we'll get the message details and create a new message with the same content
+    $.ajax({
+      url: `/api/messages/${messageId}`,
+      method: 'GET',
+      success: function(message) {
+        $.ajax({
+          url: '/api/messages',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            bot_id: message.bot_id,
+            content: message.content
+          }),
+          success: function() {
+            $('#message-details-modal').modal('hide');
+            loadMessagesData();
+            alert('Message sent successfully!');
+          },
+          error: function(xhr) {
+            alert('Failed to send message: ' + xhr.responseJSON.error);
+          }
+        });
+      },
+      error: function() {
+        alert('Failed to load message details');
+      }
+    });
+  }
+  
+  function truncateText(text, maxLength) {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+</script>
+{{ end }} 

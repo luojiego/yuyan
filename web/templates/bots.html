@@ -1,389 +1,526 @@
-{{ define "content" }}
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">Bot Configurations</h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bot-modal">
-            <i class="fas fa-plus"></i> Add Bot
-          </button>
-        </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body">
-        <ul class="nav nav-tabs" id="bot-tabs" role="tablist">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bot Management | Notification Service</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/" class="brand-link">
+      <i class="fas fa-bell brand-image ml-3"></i>
+      <span class="brand-text font-weight-light">Notification Service</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item">
-            <a class="nav-link active" id="all-bots-tab" data-toggle="tab" href="#all-bots" role="tab">All Bots</a>
+            <a href="/" class="nav-link" id="nav-dashboard">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Dashboard</p>
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="dingtalk-bots-tab" data-toggle="tab" href="#dingtalk-bots" role="tab">DingTalk</a>
+            <a href="/bots" class="nav-link active" id="nav-bots">
+              <i class="nav-icon fas fa-robot"></i>
+              <p>Bot Management</p>
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="telegram-bots-tab" data-toggle="tab" href="#telegram-bots" role="tab">Telegram</a>
+            <a href="/messages" class="nav-link" id="nav-messages">
+              <i class="nav-icon fas fa-envelope"></i>
+              <p>Message History</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/settings" class="nav-link" id="nav-settings">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>System Settings</p>
+            </a>
           </li>
         </ul>
-        <div class="tab-content mt-3" id="bot-tabs-content">
-          <div class="tab-pane fade show active" id="all-bots" role="tabpanel">
-            <table class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Description</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="all-bots-table">
-                <!-- Data will be loaded dynamically -->
-              </tbody>
-            </table>
-          </div>
-          <div class="tab-pane fade" id="dingtalk-bots" role="tabpanel">
-            <table class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Status</th>
-                  <th>Description</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="dingtalk-bots-table">
-                <!-- Data will be loaded dynamically -->
-              </tbody>
-            </table>
-          </div>
-          <div class="tab-pane fade" id="telegram-bots" role="tabpanel">
-            <table class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Status</th>
-                  <th>Description</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="telegram-bots-table">
-                <!-- Data will be loaded dynamically -->
-              </tbody>
-            </table>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Bot Management</h1>
           </div>
         </div>
       </div>
-      <!-- /.card-body -->
     </div>
-    <!-- /.card -->
-  </div>
-  <!-- /.col -->
-</div>
-<!-- /.row -->
+    <!-- /.content-header -->
 
-<!-- Bot Modal -->
-<div class="modal fade" id="bot-modal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="bot-modal-title">Add New Bot</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="bot-form">
-          <input type="hidden" id="bot-id">
-          <div class="form-group">
-            <label for="bot-name">Name</label>
-            <input type="text" class="form-control" id="bot-name" required>
-          </div>
-          <div class="form-group">
-            <label for="bot-type">Type</label>
-            <select class="form-control" id="bot-type" required>
-              <option value="dingtalk">DingTalk</option>
-              <option value="telegram">Telegram</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="bot-token">Token</label>
-            <input type="text" class="form-control" id="bot-token" required>
-          </div>
-          <div class="form-group" id="secret-group">
-            <label for="bot-secret">Secret</label>
-            <input type="text" class="form-control" id="bot-secret">
-            <small class="form-text text-muted">Required for DingTalk webhook signature.</small>
-          </div>
-          <div class="form-group">
-            <label for="bot-webhook" id="webhook-label">Webhook URL</label>
-            <input type="text" class="form-control" id="bot-webhook">
-            <small class="form-text text-muted" id="webhook-help">For DingTalk, this is the complete webhook URL.</small>
-          </div>
-          <div class="form-group">
-            <label for="bot-description">Description</label>
-            <textarea class="form-control" id="bot-description" rows="2"></textarea>
-          </div>
-          <div class="form-group">
-            <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input" id="bot-active" checked>
-              <label class="custom-control-label" for="bot-active">Active</label>
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Bot List</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-add-bot">
+                    <i class="fas fa-plus"></i> Add Bot
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Token</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bot-list">
+                    <!-- Bot data will be loaded here -->
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
             </div>
+            <!-- /.card -->
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="save-bot">Save</button>
-      </div>
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
     </div>
+    <!-- /.content -->
   </div>
-</div>
-{{ end }}
+  <!-- /.content-wrapper -->
 
-{{ define "scripts" }}
+  <!-- Add Bot Modal -->
+  <div class="modal fade" id="modal-add-bot">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add New Bot</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="add-bot-form">
+            <div class="form-group">
+              <label for="bot-name">Bot Name</label>
+              <input type="text" class="form-control" id="bot-name" placeholder="Enter bot name" required>
+            </div>
+            <div class="form-group">
+              <label for="bot-type">Bot Type</label>
+              <select class="form-control" id="bot-type" required>
+                <option value="telegram">Telegram</option>
+                <option value="discord">Discord</option>
+                <option value="slack">Slack</option>
+                <option value="dingtalk">DingTalk</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="form-group" id="secret-field-group" style="display: none;">
+              <label for="bot-secret">Bot Secret</label>
+              <input type="text" class="form-control" id="bot-secret" placeholder="Enter bot secret">
+              <small class="form-text text-muted">For DingTalk, this is the secret key used for signing webhook requests.</small>
+            </div>
+            <div class="form-group">
+              <label for="bot-token">Bot Token</label>
+              <input type="text" class="form-control" id="bot-token" placeholder="Enter bot token" required>
+            </div>
+            <div class="form-group">
+              <label for="bot-webhook">Webhook URL</label>
+              <input type="text" class="form-control" id="bot-webhook" placeholder="Enter webhook URL">
+              <small id="webhook-help" class="form-text text-muted">For DingTalk, enter the complete webhook URL from the DingTalk bot settings.</small>
+            </div>
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="bot-active" checked>
+                <label class="custom-control-label" for="bot-active">Active</label>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btn-save-bot">Save</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+
+  <!-- Edit Bot Modal -->
+  <div class="modal fade" id="modal-edit-bot">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Edit Bot</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="edit-bot-form">
+            <input type="hidden" id="edit-bot-id">
+            <div class="form-group">
+              <label for="edit-bot-name">Bot Name</label>
+              <input type="text" class="form-control" id="edit-bot-name" placeholder="Enter bot name" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-bot-type">Bot Type</label>
+              <select class="form-control" id="edit-bot-type" required>
+                <option value="telegram">Telegram</option>
+                <option value="discord">Discord</option>
+                <option value="slack">Slack</option>
+                <option value="dingtalk">DingTalk</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="form-group" id="edit-secret-field-group" style="display: none;">
+              <label for="edit-bot-secret">Bot Secret</label>
+              <input type="text" class="form-control" id="edit-bot-secret" placeholder="Enter bot secret">
+              <small class="form-text text-muted">For DingTalk, this is the secret key used for signing webhook requests.</small>
+            </div>
+            <div class="form-group">
+              <label for="edit-bot-token">Bot Token</label>
+              <input type="text" class="form-control" id="edit-bot-token" placeholder="Enter bot token" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-bot-webhook">Webhook URL</label>
+              <input type="text" class="form-control" id="edit-bot-webhook" placeholder="Enter webhook URL">
+              <small id="edit-webhook-help" class="form-text text-muted">For DingTalk, enter the complete webhook URL from the DingTalk bot settings.</small>
+            </div>
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="edit-bot-active">
+                <label class="custom-control-label" for="edit-bot-active">Active</label>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btn-update-bot">Update</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 1.0.0
+    </div>
+    <strong>Notification Service</strong>
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+<!-- Custom JS -->
+<script src="/static/js/script.js"></script>
+
 <script>
   $(document).ready(function() {
-    // Load bots data
-    loadBotsData();
+    // 设置活动导航项
+    $('#nav-bots').addClass('active');
     
-    // Set up type change event
-    $('#bot-type').on('change', function() {
-      updateBotForm();
-    });
+    // 加载机器人列表
+    loadBots();
     
-    // Set up save button
-    $('#save-bot').on('click', function() {
+    // 保存新机器人
+    $('#btn-save-bot').on('click', function() {
       saveBot();
     });
     
-    // Reset form when modal is closed
-    $('#bot-modal').on('hidden.bs.modal', function() {
-      resetBotForm();
+    // 更新机器人
+    $('#btn-update-bot').on('click', function() {
+      updateBot();
     });
+    
+    // 根据类型显示/隐藏Secret字段
+    $('#bot-type').on('change', function() {
+      updateBotTypeFields();
+    });
+    
+    $('#edit-bot-type').on('change', function() {
+      updateEditBotTypeFields();
+    });
+    
+    // Initialize fields visibility
+    updateBotTypeFields();
+    updateEditBotTypeFields();
   });
   
-  function loadBotsData() {
-    $.ajax({
-      url: '/api/bots',
-      method: 'GET',
-      success: function(response) {
-        // Clear tables
-        $('#all-bots-table').empty();
-        $('#dingtalk-bots-table').empty();
-        $('#telegram-bots-table').empty();
-        
-        if (response.length === 0) {
-          $('#all-bots-table').append('<tr><td colspan="6" class="text-center">No bots configured</td></tr>');
-          $('#dingtalk-bots-table').append('<tr><td colspan="5" class="text-center">No DingTalk bots configured</td></tr>');
-          $('#telegram-bots-table').append('<tr><td colspan="5" class="text-center">No Telegram bots configured</td></tr>');
-          return;
-        }
-        
-        // Populate tables
-        response.forEach(function(bot) {
-          const statusBadge = bot.is_active ? 
-            '<span class="badge badge-success">Active</span>' : 
-            '<span class="badge badge-secondary">Inactive</span>';
-          
-          // All bots table
-          $('#all-bots-table').append(`
-            <tr>
-              <td>${bot.id}</td>
-              <td>${bot.name}</td>
-              <td>${bot.type}</td>
-              <td>${statusBadge}</td>
-              <td>${bot.description || '-'}</td>
-              <td>
-                <button class="btn btn-sm btn-info edit-bot" data-id="${bot.id}">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger delete-bot" data-id="${bot.id}">
-                  <i class="fas fa-trash"></i>
-                </button>
-                <button class="btn btn-sm btn-success test-bot" data-id="${bot.id}">
-                  <i class="fas fa-paper-plane"></i>
-                </button>
-              </td>
-            </tr>
-          `);
-          
-          // Type-specific tables
-          if (bot.type === 'dingtalk') {
-            $('#dingtalk-bots-table').append(`
-              <tr>
-                <td>${bot.id}</td>
-                <td>${bot.name}</td>
-                <td>${statusBadge}</td>
-                <td>${bot.description || '-'}</td>
-                <td>
-                  <button class="btn btn-sm btn-info edit-bot" data-id="${bot.id}">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger delete-bot" data-id="${bot.id}">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                  <button class="btn btn-sm btn-success test-bot" data-id="${bot.id}">
-                    <i class="fas fa-paper-plane"></i>
-                  </button>
-                </td>
-              </tr>
-            `);
-          } else if (bot.type === 'telegram') {
-            $('#telegram-bots-table').append(`
-              <tr>
-                <td>${bot.id}</td>
-                <td>${bot.name}</td>
-                <td>${statusBadge}</td>
-                <td>${bot.description || '-'}</td>
-                <td>
-                  <button class="btn btn-sm btn-info edit-bot" data-id="${bot.id}">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger delete-bot" data-id="${bot.id}">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                  <button class="btn btn-sm btn-success test-bot" data-id="${bot.id}">
-                    <i class="fas fa-paper-plane"></i>
-                  </button>
-                </td>
-              </tr>
-            `);
-          }
-        });
-        
-        // Set up action buttons
-        $('.edit-bot').on('click', function() {
-          const botId = $(this).data('id');
-          editBot(botId);
-        });
-        
-        $('.delete-bot').on('click', function() {
-          const botId = $(this).data('id');
-          if (confirm('Are you sure you want to delete this bot?')) {
-            deleteBot(botId);
-          }
-        });
-        
-        $('.test-bot').on('click', function() {
-          const botId = $(this).data('id');
-          testBot(botId);
-        });
-      }
-    });
-  }
-  
-  function updateBotForm() {
+  // Update fields based on bot type
+  function updateBotTypeFields() {
     const botType = $('#bot-type').val();
     
     if (botType === 'dingtalk') {
-      $('#secret-group').show();
-      $('#webhook-label').text('Webhook URL');
-      $('#webhook-help').text('For DingTalk, this is the complete webhook URL.');
-    } else if (botType === 'telegram') {
-      $('#secret-group').hide();
-      $('#webhook-label').text('Chat ID');
-      $('#webhook-help').text('For Telegram, this is the chat ID where messages will be sent.');
+      $('#secret-field-group').show();
+      $('#bot-webhook').attr('placeholder', 'Enter webhook URL');
+      $('#bot-token').attr('placeholder', 'Enter access token (optional)');
+      $('#webhook-help').text('For DingTalk, enter the complete webhook URL from the DingTalk bot settings.');
+    } else {
+      $('#secret-field-group').hide();
+      $('#bot-webhook').attr('placeholder', 'Enter webhook URL');
+      $('#bot-token').attr('placeholder', 'Enter bot token');
+      
+      if (botType === 'telegram') {
+        $('#bot-webhook').attr('placeholder', 'Enter chat ID');
+        $('#webhook-help').text('For Telegram, this is the chat ID where messages will be sent.');
+      } else if (botType === 'discord') {
+        $('#webhook-help').text('For Discord, enter the complete webhook URL.');
+      } else if (botType === 'slack') {
+        $('#webhook-help').text('For Slack, enter the incoming webhook URL.');
+      } else {
+        $('#webhook-help').text('Enter the webhook URL for receiving notifications.');
+      }
     }
   }
   
-  function resetBotForm() {
-    $('#bot-form')[0].reset();
-    $('#bot-id').val('');
-    $('#bot-modal-title').text('Add New Bot');
-    updateBotForm();
+  // Update fields based on edit bot type
+  function updateEditBotTypeFields() {
+    const botType = $('#edit-bot-type').val();
+    
+    if (botType === 'dingtalk') {
+      $('#edit-secret-field-group').show();
+      $('#edit-bot-webhook').attr('placeholder', 'Enter webhook URL');
+      $('#edit-bot-token').attr('placeholder', 'Enter access token (optional)');
+      $('#edit-webhook-help').text('For DingTalk, enter the complete webhook URL from the DingTalk bot settings.');
+    } else {
+      $('#edit-secret-field-group').hide();
+      $('#edit-bot-webhook').attr('placeholder', 'Enter webhook URL');
+      $('#edit-bot-token').attr('placeholder', 'Enter bot token');
+      
+      if (botType === 'telegram') {
+        $('#edit-bot-webhook').attr('placeholder', 'Enter chat ID');
+        $('#edit-webhook-help').text('For Telegram, this is the chat ID where messages will be sent.');
+      } else if (botType === 'discord') {
+        $('#edit-webhook-help').text('For Discord, enter the complete webhook URL.');
+      } else if (botType === 'slack') {
+        $('#edit-webhook-help').text('For Slack, enter the incoming webhook URL.');
+      } else {
+        $('#edit-webhook-help').text('Enter the webhook URL for receiving notifications.');
+      }
+    }
   }
   
-  function editBot(botId) {
+  // 加载机器人列表
+  function loadBots() {
     $.ajax({
-      url: `/api/bots/${botId}`,
+      url: '/api/bots',
       method: 'GET',
-      success: function(bot) {
-        $('#bot-id').val(bot.id);
-        $('#bot-name').val(bot.name);
-        $('#bot-type').val(bot.type);
-        $('#bot-token').val(bot.token);
-        $('#bot-secret').val(bot.secret);
-        $('#bot-webhook').val(bot.webhook_url);
-        $('#bot-description').val(bot.description);
-        $('#bot-active').prop('checked', bot.is_active);
+      success: function(bots) {
+        const botList = $('#bot-list');
+        botList.empty();
         
-        updateBotForm();
-        $('#bot-modal-title').text('Edit Bot');
-        $('#bot-modal').modal('show');
+        if (bots && bots.length > 0) {
+          bots.forEach(function(bot) {
+            // 创建状态徽章
+            const statusBadge = bot.is_active ? 
+              '<span class="badge badge-success">Active</span>' : 
+              '<span class="badge badge-danger">Inactive</span>';
+            
+            // 截断令牌以便显示
+            const truncatedToken = bot.token ? bot.token.substring(0, 10) + '...' : 'N/A';
+            
+            // 创建行
+            const row = `
+              <tr>
+                <td>${bot.id}</td>
+                <td>${bot.name}</td>
+                <td>${bot.type}</td>
+                <td>${truncatedToken}</td>
+                <td>${statusBadge}</td>
+                <td>
+                  <button type="button" class="btn btn-sm btn-info" onclick="editBot(${bot.id})">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-danger" onclick="deleteBot(${bot.id})">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+            botList.append(row);
+          });
+        } else {
+          botList.append('<tr><td colspan="6" class="text-center">No bots found</td></tr>');
+        }
+      },
+      error: function(xhr) {
+        alert('Failed to load bots: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
       }
     });
   }
   
+  // 保存新机器人
   function saveBot() {
-    const botId = $('#bot-id').val();
-    const isNewBot = !botId;
+    const botType = $('#bot-type').val();
     
-    const botData = {
+    const bot = {
       name: $('#bot-name').val(),
-      type: $('#bot-type').val(),
+      type: botType,
       token: $('#bot-token').val(),
-      secret: $('#bot-secret').val(),
       webhook_url: $('#bot-webhook').val(),
-      description: $('#bot-description').val(),
       is_active: $('#bot-active').is(':checked')
     };
     
-    // Validate required fields
-    if (!botData.name || !botData.type || !botData.token) {
-      alert('Name, type, and token are required');
-      return;
+    // Add secret if it's a DingTalk bot
+    if (botType === 'dingtalk' && $('#bot-secret').val()) {
+      bot.secret = $('#bot-secret').val();
     }
     
-    // Make API request
     $.ajax({
-      url: isNewBot ? '/api/bots' : `/api/bots/${botId}`,
-      method: isNewBot ? 'POST' : 'PUT',
-      contentType: 'application/json',
-      data: JSON.stringify(botData),
-      success: function() {
-        $('#bot-modal').modal('hide');
-        loadBotsData();
-      },
-      error: function(xhr) {
-        alert('Failed to save bot: ' + xhr.responseJSON.error);
-      }
-    });
-  }
-  
-  function deleteBot(botId) {
-    $.ajax({
-      url: `/api/bots/${botId}`,
-      method: 'DELETE',
-      success: function() {
-        loadBotsData();
-      },
-      error: function(xhr) {
-        alert('Failed to delete bot: ' + xhr.responseJSON.error);
-      }
-    });
-  }
-  
-  function testBot(botId) {
-    const testMessage = prompt('Enter a test message:');
-    if (!testMessage) return;
-    
-    $.ajax({
-      url: '/api/messages',
+      url: '/api/bots',
       method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({
-        bot_id: botId,
-        content: testMessage
-      }),
+      data: JSON.stringify(bot),
       success: function() {
-        alert('Test message sent successfully!');
+        $('#modal-add-bot').modal('hide');
+        $('#add-bot-form')[0].reset();
+        loadBots();
       },
       error: function(xhr) {
-        alert('Failed to send test message: ' + xhr.responseJSON.error);
+        alert('Failed to create bot: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
       }
     });
   }
+  
+  // 编辑机器人
+  function editBot(id) {
+    $.ajax({
+      url: `/api/bots/${id}`,
+      method: 'GET',
+      success: function(bot) {
+        $('#edit-bot-id').val(bot.id);
+        $('#edit-bot-name').val(bot.name);
+        $('#edit-bot-type').val(bot.type);
+        $('#edit-bot-token').val(bot.token);
+        $('#edit-bot-webhook').val(bot.webhook_url);
+        $('#edit-bot-active').prop('checked', bot.is_active);
+        
+        // Handle secret for DingTalk bots
+        if (bot.type === 'dingtalk') {
+          $('#edit-secret-field-group').show();
+          $('#edit-bot-secret').val(bot.secret || '');
+        } else {
+          $('#edit-secret-field-group').hide();
+        }
+        
+        $('#modal-edit-bot').modal('show');
+      },
+      error: function(xhr) {
+        alert('Failed to load bot details: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+      }
+    });
+  }
+  
+  // 更新机器人
+  function updateBot() {
+    const id = $('#edit-bot-id').val();
+    const botType = $('#edit-bot-type').val();
+    
+    const bot = {
+      name: $('#edit-bot-name').val(),
+      type: botType,
+      token: $('#edit-bot-token').val(),
+      webhook_url: $('#edit-bot-webhook').val(),
+      is_active: $('#edit-bot-active').is(':checked')
+    };
+    
+    // Add secret if it's a DingTalk bot
+    if (botType === 'dingtalk' && $('#edit-bot-secret').val()) {
+      bot.secret = $('#edit-bot-secret').val();
+    }
+    
+    $.ajax({
+      url: `/api/bots/${id}`,
+      method: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify(bot),
+      success: function() {
+        $('#modal-edit-bot').modal('hide');
+        loadBots();
+      },
+      error: function(xhr) {
+        alert('Failed to update bot: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+      }
+    });
+  }
+  
+  // 删除机器人
+  function deleteBot(id) {
+    if (confirm('Are you sure you want to delete this bot?')) {
+      $.ajax({
+        url: `/api/bots/${id}`,
+        method: 'DELETE',
+        success: function() {
+          loadBots();
+        },
+        error: function(xhr) {
+          alert('Failed to delete bot: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+        }
+      });
+    }
+  }
 </script>
-{{ end }} 
+</body>
+</html> 

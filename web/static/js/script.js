@@ -106,4 +106,171 @@ $(document).ready(function() {
       return false;
     }
   });
-}); 
+  
+  // Set active navigation item
+  setActiveNavItem();
+  
+  // Load dashboard data if on dashboard page
+  if (window.location.pathname === '/') {
+    loadDashboardData();
+  }
+  
+  // Set up quick send form submission on dashboard
+  $('#quick-send-form').on('submit', function(e) {
+    e.preventDefault();
+    sendQuickMessage();
+  });
+});
+
+// Dashboard functions
+function loadDashboardData() {
+  // Load bot data
+  $.ajax({
+    url: '/api/bots',
+    method: 'GET',
+    success: function(bots) {
+      $('#total-bots').text(bots.length || 0);
+      
+      // Populate bot select in quick send form
+      const botSelect = $('#bot-select');
+      if (botSelect.length) {
+        botSelect.empty();
+        if (bots.length === 0) {
+          botSelect.append('<option value="">No bots available</option>');
+        } else {
+          bots.forEach(function(bot) {
+            if (bot.is_active) {
+              botSelect.append(`<option value="${bot.id}">${bot.name} (${bot.type})</option>`);
+            }
+          });
+        }
+      }
+    },
+    error: function(xhr) {
+      handleAjaxError(xhr);
+    }
+  });
+  
+  // Load message data for stats and recent messages
+  $.ajax({
+    url: '/api/messages',
+    method: 'GET',
+    success: function(messages) {
+      // Calculate stats
+      let sentCount = 0;
+      let pendingCount = 0;
+      let failedCount = 0;
+      
+      if (messages && messages.length > 0) {
+        messages.forEach(function(message) {
+          if (message.status === 'sent') {
+            sentCount++;
+          } else if (message.status === 'pending' || message.status === 'processing') {
+            pendingCount++;
+          } else if (message.status === 'failed') {
+            failedCount++;
+          }
+        });
+      }
+      
+      // Update stats display
+      $('#total-messages-sent').text(sentCount);
+      $('#total-messages-pending').text(pendingCount);
+      $('#total-messages-failed').text(failedCount);
+      
+      // Populate recent messages table
+      const tbody = $('#recent-messages');
+      if (tbody.length) {
+        tbody.empty();
+        
+        if (messages && messages.length > 0) {
+          // Get 5 most recent messages
+          const recentMessages = messages.slice(0, 5);
+          
+          recentMessages.forEach(function(message) {
+            let statusClass = 'secondary';
+            if (message.status === 'sent') statusClass = 'success';
+            if (message.status === 'failed') statusClass = 'danger';
+            if (message.status === 'pending') statusClass = 'warning';
+            
+            // Get bot name, using message.bot.name if available, otherwise try message.bot_name or 'Unknown'
+            let botName = 'Unknown';
+            if (message.bot && message.bot.name) {
+              botName = message.bot.name;
+            } else if (message.bot_name) {
+              botName = message.bot_name;
+            }
+            
+            const row = `
+              <tr>
+                <td>${botName}</td>
+                <td><span class="badge badge-${statusClass}">${message.status}</span></td>
+                <td>${new Date(message.sent_at).toLocaleString()}</td>
+                <td>
+                  <a href="/messages?id=${message.id}" class="btn btn-sm btn-info">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                </td>
+              </tr>
+            `;
+            tbody.append(row);
+          });
+        } else {
+          tbody.append('<tr><td colspan="4" class="text-center">No messages found</td></tr>');
+        }
+      }
+    },
+    error: function(xhr) {
+      handleAjaxError(xhr);
+    }
+  });
+}
+
+// Set active navigation item based on current path
+function setActiveNavItem() {
+  const path = window.location.pathname;
+  if (path === '/') {
+    $('#nav-dashboard').addClass('active');
+  } else if (path.includes('/bots')) {
+    $('#nav-bots').addClass('active');
+  } else if (path.includes('/messages')) {
+    $('#nav-messages').addClass('active');
+  } else if (path.includes('/settings')) {
+    $('#nav-settings').addClass('active');
+  }
+}
+
+// Handle quick send message form submission
+function sendQuickMessage() {
+  showLoading();
+  
+  const botId = $('#bot-select').val();
+  const format = $('#message-format').val();
+  const content = $('#message-content').val();
+  
+  if (!botId || !content) {
+    hideLoading();
+    showToast('Please select a bot and enter a message', 'danger');
+    return;
+  }
+  
+  $.ajax({
+    url: '/api/messages',
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+      bot_id: parseInt(botId),
+      content: content,
+      format: format
+    }),
+    success: function(response) {
+      hideLoading();
+      showToast('Message sent successfully!', 'success');
+      $('#message-content').val(''); // Clear the message content
+      loadDashboardData(); // Reload dashboard data to show the new message
+    },
+    error: function(xhr) {
+      handleAjaxError(xhr);
+    }
+  });
+} 

@@ -1,238 +1,252 @@
-{{ define "content" }}
-<div class="row">
-  <div class="col-lg-3 col-6">
-    <!-- small box -->
-    <div class="small-box bg-info">
-      <div class="inner">
-        <h3 id="total-bots">0</h3>
-        <p>Total Bots</p>
-      </div>
-      <div class="icon">
-        <i class="fas fa-robot"></i>
-      </div>
-      <a href="/bots" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <!-- ./col -->
-  <div class="col-lg-3 col-6">
-    <!-- small box -->
-    <div class="small-box bg-success">
-      <div class="inner">
-        <h3 id="total-messages-sent">0</h3>
-        <p>Messages Sent</p>
-      </div>
-      <div class="icon">
-        <i class="fas fa-paper-plane"></i>
-      </div>
-      <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <!-- ./col -->
-  <div class="col-lg-3 col-6">
-    <!-- small box -->
-    <div class="small-box bg-warning">
-      <div class="inner">
-        <h3 id="total-messages-pending">0</h3>
-        <p>Messages Pending</p>
-      </div>
-      <div class="icon">
-        <i class="fas fa-clock"></i>
-      </div>
-      <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <!-- ./col -->
-  <div class="col-lg-3 col-6">
-    <!-- small box -->
-    <div class="small-box bg-danger">
-      <div class="inner">
-        <h3 id="total-messages-failed">0</h3>
-        <p>Messages Failed</p>
-      </div>
-      <div class="icon">
-        <i class="fas fa-exclamation-triangle"></i>
-      </div>
-      <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <!-- ./col -->
-</div>
-<!-- /.row -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard | Notification Service</title>
 
-<div class="row">
-  <div class="col-md-6">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">Recent Messages</h3>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body">
-        <table class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>Bot</th>
-              <th>Status</th>
-              <th>Sent At</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="recent-messages">
-            <!-- Data will be loaded dynamically -->
-          </tbody>
-        </table>
-      </div>
-      <!-- /.card-body -->
-    </div>
-    <!-- /.card -->
-  </div>
-  <!-- /.col-md-6 -->
-  
-  <div class="col-md-6">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">Quick Send Message</h3>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body">
-        <form id="quick-send-form">
-          <div class="form-group">
-            <label for="bot-select">Select Bot</label>
-            <select class="form-control" id="bot-select" required>
-              <!-- Bot options will be loaded dynamically -->
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="message-content">Message</label>
-            <textarea class="form-control" id="message-content" rows="3" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Send Message</button>
-        </form>
-      </div>
-      <!-- /.card-body -->
-    </div>
-    <!-- /.card -->
-  </div>
-  <!-- /.col-md-6 -->
-</div>
-<!-- /.row -->
-{{ end }}
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
 
-{{ define "scripts" }}
-<script>
-  $(document).ready(function() {
-    // Load dashboard data
-    loadDashboardData();
-    
-    // Set up form submission
-    $('#quick-send-form').on('submit', function(e) {
-      e.preventDefault();
-      sendQuickMessage();
-    });
-    
-    // Reload data every 30 seconds
-    setInterval(loadDashboardData, 30000);
-  });
-  
-  function loadDashboardData() {
-    // Load bot count
-    $.ajax({
-      url: '/api/bots',
-      method: 'GET',
-      success: function(response) {
-        $('#total-bots').text(response.length);
-        
-        // Populate bot select
-        $('#bot-select').empty();
-        if (response.length === 0) {
-          $('#bot-select').append('<option value="">No bots available</option>');
-        } else {
-          response.forEach(function(bot) {
-            if (bot.is_active) {
-              $('#bot-select').append(`<option value="${bot.id}">${bot.name} (${bot.type})</option>`);
-            }
-          });
-        }
-      }
-    });
-    
-    // Load message statistics
-    $.ajax({
-      url: '/api/messages',
-      method: 'GET',
-      success: function(response) {
-        let sentCount = 0;
-        let pendingCount = 0;
-        let failedCount = 0;
-        
-        response.forEach(function(message) {
-          if (message.status === 'sent') {
-            sentCount++;
-          } else if (message.status === 'pending' || message.status === 'processing') {
-            pendingCount++;
-          } else if (message.status === 'failed') {
-            failedCount++;
-          }
-        });
-        
-        $('#total-messages-sent').text(sentCount);
-        $('#total-messages-pending').text(pendingCount);
-        $('#total-messages-failed').text(failedCount);
-        
-        // Populate recent messages table
-        $('#recent-messages').empty();
-        const recentMessages = response.slice(0, 5); // Get 5 most recent messages
-        recentMessages.forEach(function(message) {
-          const sentAt = message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A';
-          const statusClass = message.status === 'sent' ? 'success' : 
-                              message.status === 'failed' ? 'danger' : 'warning';
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/" class="brand-link">
+      <i class="fas fa-bell brand-image ml-3"></i>
+      <span class="brand-text font-weight-light">Notification Service</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <li class="nav-item">
+            <a href="/" class="nav-link active" id="nav-dashboard">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Dashboard</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/bots" class="nav-link" id="nav-bots">
+              <i class="nav-icon fas fa-robot"></i>
+              <p>Bot Management</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/messages" class="nav-link" id="nav-messages">
+              <i class="nav-icon fas fa-envelope"></i>
+              <p>Message History</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/settings" class="nav-link" id="nav-settings">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>System Settings</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Dashboard</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3 id="total-bots">0</h3>
+                <p>Total Bots</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-robot"></i>
+              </div>
+              <a href="/bots" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3 id="total-messages-sent">0</h3>
+                <p>Messages Sent</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-paper-plane"></i>
+              </div>
+              <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3 id="total-messages-pending">0</h3>
+                <p>Messages Pending</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3 id="total-messages-failed">0</h3>
+                <p>Messages Failed</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Recent Messages</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Bot</th>
+                      <th>Status</th>
+                      <th>Sent At</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-messages">
+                    <!-- Data will be loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col-md-6 -->
           
-          $('#recent-messages').append(`
-            <tr>
-              <td>${message.bot.name}</td>
-              <td><span class="badge badge-${statusClass}">${message.status}</span></td>
-              <td>${sentAt}</td>
-              <td>
-                <a href="/messages?id=${message.id}" class="btn btn-sm btn-info">
-                  <i class="fas fa-eye"></i>
-                </a>
-              </td>
-            </tr>
-          `);
-        });
-        
-        if (recentMessages.length === 0) {
-          $('#recent-messages').append('<tr><td colspan="4" class="text-center">No messages yet</td></tr>');
-        }
-      }
-    });
-  }
-  
-  function sendQuickMessage() {
-    const botId = $('#bot-select').val();
-    const content = $('#message-content').val();
-    
-    if (!botId || !content) {
-      alert('Please select a bot and enter a message');
-      return;
-    }
-    
-    $.ajax({
-      url: '/api/messages',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({
-        bot_id: parseInt(botId),
-        content: content
-      }),
-      success: function(response) {
-        $('#message-content').val('');
-        alert('Message sent successfully!');
-        loadDashboardData(); // Reload data to show new message
-      },
-      error: function(xhr) {
-        alert('Failed to send message: ' + xhr.responseJSON.error);
-      }
-    });
-  }
-</script>
-{{ end }} 
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Quick Send Message</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <form id="quick-send-form">
+                  <div class="form-group">
+                    <label for="bot-select">Select Bot</label>
+                    <select class="form-control" id="bot-select" required>
+                      <!-- Bot options will be loaded dynamically -->
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="message-format">Message Format</label>
+                    <select class="form-control" id="message-format">
+                      <option value="text">Text</option>
+                      <option value="markdown">Markdown</option>
+                    </select>
+                    <small class="form-text text-muted">
+                      Markdown supports **bold**, __italic__, # headings, > quotes, and ```code blocks```.
+                    </small>
+                  </div>
+                  <div class="form-group">
+                    <label for="message-content">Message</label>
+                    <textarea class="form-control" id="message-content" rows="3" required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col-md-6 -->
+        </div>
+        <!-- /.row -->
+      </div>
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 1.0.0
+    </div>
+    <strong>Notification Service</strong>
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+<!-- Custom JS -->
+<script src="/static/js/script.js"></script>
+
+</body>
+</html> 

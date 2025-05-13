@@ -58,7 +58,7 @@ func (s *MessageService) GetMessageByID(id uint) (*models.Message, error) {
 }
 
 // SendMessage sends a message through the specified bot
-func (s *MessageService) SendMessage(botID uint, content string) (*models.Message, error) {
+func (s *MessageService) SendMessage(botID uint, content string, format string) (*models.Message, error) {
 	// Get bot configuration
 	botConfig, err := s.BotService.GetBotByID(botID)
 	if err != nil {
@@ -70,6 +70,7 @@ func (s *MessageService) SendMessage(botID uint, content string) (*models.Messag
 		BotID:   botID,
 		Content: content,
 		Status:  models.MessageStatusProcessing,
+		Format:  format,
 	}
 
 	// Save message to database
@@ -106,4 +107,22 @@ func (s *MessageService) SendMessage(botID uint, content string) (*models.Messag
 	database.DB.Save(&message)
 
 	return &message, nil
+}
+
+// DeleteMessage deletes a message by ID
+func (s *MessageService) DeleteMessage(id uint) error {
+	// Check if message exists
+	var message models.Message
+	result := database.DB.First(&message, id)
+	if result.Error != nil {
+		return fmt.Errorf("failed to find message: %w", result.Error)
+	}
+
+	// Delete the message (soft delete with gorm)
+	result = database.DB.Delete(&message)
+	if result.Error != nil {
+		return fmt.Errorf("failed to delete message: %w", result.Error)
+	}
+
+	return nil
 }

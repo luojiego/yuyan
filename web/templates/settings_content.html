@@ -1,0 +1,290 @@
+{{ define "content" }}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">System Settings</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <form id="settings-form">
+          <!-- Server Settings -->
+          <h5>Server Settings</h5>
+          <hr>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="server-port">Server Port</label>
+                <input type="number" class="form-control" id="server-port" min="1" max="65535" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="server-mode">Server Mode</label>
+                <select class="form-control" id="server-mode">
+                  <option value="debug">Debug</option>
+                  <option value="release">Release</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Database Settings -->
+          <h5 class="mt-4">Database Settings</h5>
+          <hr>
+          <div class="form-group">
+            <label for="db-type">Database Type</label>
+            <select class="form-control" id="db-type">
+              <option value="sqlite">SQLite</option>
+              <option value="mysql">MySQL</option>
+              <option value="postgres">PostgreSQL</option>
+            </select>
+          </div>
+          
+          <!-- SQLite Settings -->
+          <div id="sqlite-settings">
+            <div class="form-group">
+              <label for="sqlite-path">Database File Path</label>
+              <input type="text" class="form-control" id="sqlite-path">
+            </div>
+          </div>
+          
+          <!-- MySQL Settings -->
+          <div id="mysql-settings" style="display: none;">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mysql-host">Host</label>
+                  <input type="text" class="form-control" id="mysql-host">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mysql-port">Port</label>
+                  <input type="number" class="form-control" id="mysql-port" min="1" max="65535">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mysql-username">Username</label>
+                  <input type="text" class="form-control" id="mysql-username">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mysql-password">Password</label>
+                  <input type="password" class="form-control" id="mysql-password">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="mysql-dbname">Database Name</label>
+              <input type="text" class="form-control" id="mysql-dbname">
+            </div>
+            <div class="form-group">
+              <label for="mysql-params">Connection Parameters</label>
+              <input type="text" class="form-control" id="mysql-params">
+            </div>
+          </div>
+          
+          <!-- PostgreSQL Settings -->
+          <div id="postgres-settings" style="display: none;">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="postgres-host">Host</label>
+                  <input type="text" class="form-control" id="postgres-host">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="postgres-port">Port</label>
+                  <input type="number" class="form-control" id="postgres-port" min="1" max="65535">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="postgres-username">Username</label>
+                  <input type="text" class="form-control" id="postgres-username">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="postgres-password">Password</label>
+                  <input type="password" class="form-control" id="postgres-password">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="postgres-dbname">Database Name</label>
+              <input type="text" class="form-control" id="postgres-dbname">
+            </div>
+            <div class="form-group">
+              <label for="postgres-sslmode">SSL Mode</label>
+              <select class="form-control" id="postgres-sslmode">
+                <option value="disable">Disable</option>
+                <option value="require">Require</option>
+                <option value="verify-ca">Verify CA</option>
+                <option value="verify-full">Verify Full</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="alert alert-warning mt-4">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <strong>Warning:</strong> Changing these settings will require a server restart to take effect.
+          </div>
+          
+          <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </div>
+        </form>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- /.col -->
+</div>
+<!-- /.row -->
+{{ end }}
+
+{{ define "scripts" }}
+<script>
+  $(document).ready(function() {
+    // Load current settings
+    loadSettings();
+    
+    // Database type change event
+    $('#db-type').on('change', function() {
+      updateDatabaseForms();
+    });
+    
+    // Form submission
+    $('#settings-form').on('submit', function(e) {
+      e.preventDefault();
+      saveSettings();
+    });
+  });
+  
+  function loadSettings() {
+    $.ajax({
+      url: '/api/config',
+      method: 'GET',
+      success: function(config) {
+        // Server settings
+        $('#server-port').val(config.server.port);
+        $('#server-mode').val(config.server.mode);
+        
+        // Database settings
+        $('#db-type').val(config.database.type);
+        
+        // SQLite settings
+        if (config.database.sqlite) {
+          $('#sqlite-path').val(config.database.sqlite.path);
+        }
+        
+        // MySQL settings
+        if (config.database.mysql) {
+          $('#mysql-host').val(config.database.mysql.host);
+          $('#mysql-port').val(config.database.mysql.port);
+          $('#mysql-username').val(config.database.mysql.username);
+          $('#mysql-password').val(config.database.mysql.password);
+          $('#mysql-dbname').val(config.database.mysql.dbname);
+          $('#mysql-params').val(config.database.mysql.params);
+        }
+        
+        // PostgreSQL settings
+        if (config.database.postgres) {
+          $('#postgres-host').val(config.database.postgres.host);
+          $('#postgres-port').val(config.database.postgres.port);
+          $('#postgres-username').val(config.database.postgres.username);
+          $('#postgres-password').val(config.database.postgres.password);
+          $('#postgres-dbname').val(config.database.postgres.dbname);
+          $('#postgres-sslmode').val(config.database.postgres.sslmode);
+        }
+        
+        // Update form visibility
+        updateDatabaseForms();
+      },
+      error: function() {
+        alert('Failed to load settings');
+      }
+    });
+  }
+  
+  function updateDatabaseForms() {
+    const dbType = $('#db-type').val();
+    
+    // Hide all database settings
+    $('#sqlite-settings').hide();
+    $('#mysql-settings').hide();
+    $('#postgres-settings').hide();
+    
+    // Show selected database settings
+    if (dbType === 'sqlite') {
+      $('#sqlite-settings').show();
+    } else if (dbType === 'mysql') {
+      $('#mysql-settings').show();
+    } else if (dbType === 'postgres') {
+      $('#postgres-settings').show();
+    }
+  }
+  
+  function saveSettings() {
+    const dbType = $('#db-type').val();
+    
+    const config = {
+      server: {
+        port: parseInt($('#server-port').val()),
+        mode: $('#server-mode').val()
+      },
+      database: {
+        type: dbType
+      }
+    };
+    
+    // Add database-specific settings
+    if (dbType === 'sqlite') {
+      config.database.sqlite = {
+        path: $('#sqlite-path').val()
+      };
+    } else if (dbType === 'mysql') {
+      config.database.mysql = {
+        host: $('#mysql-host').val(),
+        port: parseInt($('#mysql-port').val()),
+        username: $('#mysql-username').val(),
+        password: $('#mysql-password').val(),
+        dbname: $('#mysql-dbname').val(),
+        params: $('#mysql-params').val()
+      };
+    } else if (dbType === 'postgres') {
+      config.database.postgres = {
+        host: $('#postgres-host').val(),
+        port: parseInt($('#postgres-port').val()),
+        username: $('#postgres-username').val(),
+        password: $('#postgres-password').val(),
+        dbname: $('#postgres-dbname').val(),
+        sslmode: $('#postgres-sslmode').val()
+      };
+    }
+    
+    $.ajax({
+      url: '/api/config',
+      method: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify(config),
+      success: function(response) {
+        alert(response.message);
+      },
+      error: function(xhr) {
+        alert('Failed to save settings: ' + xhr.responseJSON.error);
+      }
+    });
+  }
+</script>
+{{ end }} 

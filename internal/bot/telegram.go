@@ -5,8 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"os"
+	"time"
 
 	"yuyan/internal/models"
+
+	"github.com/spf13/viper"
 )
 
 // TelegramBot implements a Telegram notification bot
@@ -46,8 +51,43 @@ func (t *TelegramBot) Send(message string) error {
 		return fmt.Errorf("failed to marshal Telegram message: %w", err)
 	}
 
+	// Create HTTP client with proxy if available
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	// Check if proxy is enabled in config
+	if viper.GetBool("proxy.enable") {
+		// Get proxy URL from config
+		proxyURLStr := viper.GetString("proxy.url")
+		if proxyURLStr == "" {
+			// Fallback to environment variable
+			proxyURLStr = os.Getenv("HTTP_PROXY")
+		}
+
+		if proxyURLStr != "" {
+			// Configure proxy
+			proxyURL, err := url.Parse(proxyURLStr)
+			if err != nil {
+				return fmt.Errorf("invalid proxy URL: %w", err)
+			}
+
+			// Set up proxy transport
+			transport := &http.Transport{
+				Proxy: http.ProxyURL(proxyURL),
+			}
+			client.Transport = transport
+		}
+	}
+
 	// Send HTTP request
-	resp, err := http.Post(apiURL, "application/json", bytes.NewBuffer(msgBytes))
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(msgBytes))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send Telegram message: %w", err)
 	}

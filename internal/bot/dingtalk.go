@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"yuyan/internal/models"
@@ -28,6 +29,12 @@ type DingTalkMessage struct {
 	At       map[string]interface{} `json:"at,omitempty"`
 }
 
+// DingTalkResponse represents the response structure from DingTalk API
+type DingTalkResponse struct {
+	ErrCode int    `json:"errcode"`
+	ErrMsg  string `json:"errmsg"`
+}
+
 // NewDingTalkBot creates a new DingTalk bot instance
 func NewDingTalkBot(bot models.Bot) *DingTalkBot {
 	return &DingTalkBot{
@@ -37,13 +44,49 @@ func NewDingTalkBot(bot models.Bot) *DingTalkBot {
 
 // Send sends a message through the DingTalk bot
 func (d *DingTalkBot) Send(message string) error {
-	// Create message payload
-	msg := DingTalkMessage{
-		MsgType: "text",
-		Text: map[string]string{
-			"content": message,
-		},
+	// Validate webhook URL
+	if d.Bot.WebhookURL == "" {
+		return fmt.Errorf("webhook URL is required for DingTalk bot")
 	}
+
+	// Validate webhook URL format
+	webhookURL := d.Bot.WebhookURL
+	if _, err := url.Parse(webhookURL); err != nil {
+		return fmt.Errorf("invalid webhook URL: %w", err)
+	}
+
+	// Check if message is in markdown format (starts with # or contains ** or __)
+	isMarkdown := false
+	if len(message) > 0 && (message[0] == '#' ||
+		contains(message, "**") ||
+		contains(message, "__") ||
+		contains(message, "```") ||
+		contains(message, ">")) {
+		isMarkdown = true
+	}
+
+	// Create message payload
+	msg := DingTalkMessage{}
+
+	if isMarkdown {
+		msg.MsgType = "markdown"
+		msg.Markdown = map[string]string{
+			"title": "Notification",
+			"text":  message,
+		}
+	} else {
+		msg.MsgType = "text"
+		msg.Text = map[string]string{
+			"content": message,
+		}
+	}
+
+	// Add at configuration if needed
+	// This could be enhanced to parse @mentions from the message
+	// msg.At = map[string]interface{}{
+	//    "atMobiles": []string{},
+	//    "isAtAll": false,
+	// }
 
 	// Convert message to JSON
 	msgBytes, err := json.Marshal(msg)
@@ -52,7 +95,6 @@ func (d *DingTalkBot) Send(message string) error {
 	}
 
 	// Create request URL with signature if secret exists
-	webhookURL := d.Bot.WebhookURL
 	if d.Bot.Secret != "" {
 		timestamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
 		sign := calculateDingTalkSignature(timestamp, d.Bot.Secret)
@@ -77,16 +119,23 @@ func (d *DingTalkBot) Send(message string) error {
 	}
 	defer resp.Body.Close()
 
+	// Parse response
+	var response DingTalkResponse
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return fmt.Errorf("failed to decode DingTalk response: %w", err)
+	}
+
 	// Check response status
-	if resp.StatusCode != http.StatusOK {
-		var result map[string]interface{}
-		if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-			return fmt.Errorf("failed to send DingTalk message: status %d", resp.StatusCode)
-		}
-		return fmt.Errorf("failed to send DingTalk message: %v", result)
+	if response.ErrCode != 0 {
+		return fmt.Errorf("failed to send DingTalk message: %s (code: %d)", response.ErrMsg, response.ErrCode)
 	}
 
 	return nil
+}
+
+// Helper function to check if string contains a substring
+func contains(s, substr string) bool {
+	return strings.Contains(s, substr)
 }
 
 // calculateDingTalkSignature calculates the signature for DingTalk webhook

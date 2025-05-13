@@ -19,6 +19,7 @@ type MessageAPI struct {
 type MessageRequest struct {
 	BotID   uint   `json:"bot_id" binding:"required"`
 	Content string `json:"content" binding:"required"`
+	Format  string `json:"format"`
 }
 
 // NewMessageAPI creates a new MessageAPI handler
@@ -84,11 +85,34 @@ func (api *MessageAPI) SendMessage(c *gin.Context) {
 		return
 	}
 
-	message, err := api.MessageService.SendMessage(req.BotID, req.Content)
+	// Default to text format if not specified
+	if req.Format == "" {
+		req.Format = "text"
+	}
+
+	message, err := api.MessageService.SendMessage(req.BotID, req.Content, req.Format)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated, message)
+}
+
+// DeleteMessage handles DELETE /api/messages/:id
+func (api *MessageAPI) DeleteMessage(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid message ID"})
+		return
+	}
+
+	err = api.MessageService.DeleteMessage(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Message deleted successfully"})
 }

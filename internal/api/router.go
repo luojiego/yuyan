@@ -33,20 +33,20 @@ func SetupRouter(r *gin.Engine) {
 		api.GET("/messages", messageAPI.GetAllMessages)
 		api.GET("/messages/:id", messageAPI.GetMessageByID)
 		api.POST("/messages", messageAPI.SendMessage)
+		api.DELETE("/messages/:id", messageAPI.DeleteMessage)
 
 		// Config endpoints
 		api.GET("/config", configAPI.GetConfig)
 		api.PUT("/config", configAPI.UpdateConfig)
 	}
 
-	// Frontend routes
-	r.Static("/static", "./web/static")
-	r.LoadHTMLGlob("web/templates/*")
+	// Serve static files
+	// r.Static("/static", "./web/static")  // Removed to avoid conflict with main.go
 
-	// Define frontend routes
+	// Web routes
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "index.html", gin.H{
-			"title": "Notification Service",
+			"title": "Dashboard",
 		})
 	})
 

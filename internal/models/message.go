@@ -22,6 +22,7 @@ type Message struct {
 	BotID     uint           `json:"bot_id" gorm:"index;not null"`
 	Bot       Bot            `json:"bot" gorm:"foreignKey:BotID"`
 	Content   string         `json:"content" gorm:"type:text;not null"`
+	Format    string         `json:"format" gorm:"size:20;default:'text'"`
 	Status    MessageStatus  `json:"status" gorm:"size:20;default:'pending'"`
 	Error     string         `json:"error" gorm:"size:255"`
 	SentAt    *time.Time     `json:"sent_at"`

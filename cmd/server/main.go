@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
 	"yuyan/internal/api"
 	"yuyan/internal/database"
 
@@ -63,6 +62,18 @@ func main() {
 
 	// Initialize Gin router
 	r := gin.Default()
+
+	// Set up static file server
+	r.Static("/static", "web/static")
+	r.StaticFile("/favicon.ico", "web/static/favicon.ico")
+
+	// Load HTML files directly
+	r.LoadHTMLFiles(
+		"web/templates/index.html",
+		"web/templates/bots.html",
+		"web/templates/messages.html",
+		"web/templates/settings.html",
+	)
 
 	// Set up routes
 	api.SetupRouter(r)
