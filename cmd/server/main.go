@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"os"
 	"path/filepath"
@@ -31,7 +32,7 @@ func init() {
 	}
 
 	// Set default values
-	viper.SetDefault("server.port", 8080)
+	viper.SetDefault("server.port", 8090)
 	viper.SetDefault("server.mode", "debug")
 	viper.SetDefault("database.type", "sqlite")
 	viper.SetDefault("database.sqlite.path", "./data/yuyan.db")
@@ -67,13 +68,17 @@ func main() {
 	r.Static("/static", "web/static")
 	r.StaticFile("/favicon.ico", "web/static/favicon.ico")
 
-	// Load HTML files directly
-	r.LoadHTMLFiles(
-		"web/templates/index.html",
-		"web/templates/bots.html",
-		"web/templates/messages.html",
-		"web/templates/settings.html",
-	)
+	// Define template functions
+	r.SetFuncMap(template.FuncMap{
+		"getCurrentLanguage": func() string {
+			// This is a placeholder function to be used in templates
+			// The actual language detection happens in JavaScript
+			return "en"
+		},
+	})
+
+	// Load HTML templates
+	r.LoadHTMLGlob("web/templates/*.html")
 
 	// Set up routes
 	api.SetupRouter(r)
@@ -104,7 +109,7 @@ func createDefaultConfigIfNotExists() error {
 
 	// Default config content
 	configContent := `server:
-  port: 8080
+  port: 8090
   mode: debug
 
 database:

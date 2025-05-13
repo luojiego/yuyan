@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ if eq (getCurrentLanguage) "zh" }}zh{{ else }}en{{ end }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ .title }} | Notification Service</title>
+  <title>{{ .title }} | <span data-i18n="notification_service">Notification Service</span></title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -27,6 +27,20 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      <!-- Language Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="fas fa-language"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a href="#" class="dropdown-item language-option" data-lang="en">
+            <i class="flag-icon flag-icon-us mr-2"></i> English
+          </a>
+          <a href="#" class="dropdown-item language-option" data-lang="zh">
+            <i class="flag-icon flag-icon-cn mr-2"></i> 中文
+          </a>
+        </div>
+      </li>
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
@@ -41,7 +55,7 @@
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <i class="fas fa-bell brand-image ml-3"></i>
-      <span class="brand-text font-weight-light">Notification Service</span>
+      <span class="brand-text font-weight-light" data-i18n="notification_service">Notification Service</span>
     </a>
 
     <!-- Sidebar -->
@@ -52,25 +66,25 @@
           <li class="nav-item">
             <a href="/" class="nav-link" id="nav-dashboard">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Dashboard</p>
+              <p data-i18n="dashboard">Dashboard</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/bots" class="nav-link" id="nav-bots">
               <i class="nav-icon fas fa-robot"></i>
-              <p>Bot Management</p>
+              <p data-i18n="bot_management">Bot Management</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/messages" class="nav-link" id="nav-messages">
               <i class="nav-icon fas fa-envelope"></i>
-              <p>Message History</p>
+              <p data-i18n="message_history">Message History</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/settings" class="nav-link" id="nav-settings">
               <i class="nav-icon fas fa-cog"></i>
-              <p>System Settings</p>
+              <p data-i18n="system_settings">System Settings</p>
             </a>
           </li>
         </ul>
@@ -107,9 +121,9 @@
   <!-- Main Footer -->
   <footer class="main-footer">
     <div class="float-right d-none d-sm-block">
-      <b>Version</b> 1.0.0
+      <b data-i18n="version">Version</b> 1.0.0
     </div>
-    <strong>Notification Service</strong>
+    <strong data-i18n="notification_service">Notification Service</strong>
   </footer>
 </div>
 <!-- ./wrapper -->
@@ -120,6 +134,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+<!-- Font Awesome Flag icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+<!-- i18n Support -->
+<script src="/static/js/i18n.js"></script>
 <!-- Custom JS -->
 <script src="/static/js/script.js"></script>
 
@@ -139,6 +157,17 @@
     } else if (path.includes('/settings')) {
       $('#nav-settings').addClass('active');
     }
+    
+    // Handle language switching
+    $('.language-option').on('click', function(e) {
+      e.preventDefault();
+      const lang = $(this).data('lang');
+      if (changeLanguage(lang)) {
+        // Language changed successfully
+        // Refresh the page to apply changes
+        // window.location.reload();
+      }
+    });
   });
 </script>
 </body>

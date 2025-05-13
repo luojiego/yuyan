@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ if eq (getCurrentLanguage) "zh" }}zh{{ else }}en{{ end }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard | Notification Service</title>
+  <!-- data-page-title helps the i18n script know what to translate -->
+  <meta name="page-title" data-i18n="dashboard" content="Dashboard">
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -11,6 +13,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
+  <!-- Flag icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
@@ -27,6 +31,20 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      <!-- Language Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="fas fa-language"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a href="#" class="dropdown-item language-option" data-lang="en">
+            <i class="flag-icon flag-icon-us mr-2"></i> English
+          </a>
+          <a href="#" class="dropdown-item language-option" data-lang="zh">
+            <i class="flag-icon flag-icon-cn mr-2"></i> 中文
+          </a>
+        </div>
+      </li>
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
@@ -41,7 +59,7 @@
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <i class="fas fa-bell brand-image ml-3"></i>
-      <span class="brand-text font-weight-light">Notification Service</span>
+      <span class="brand-text font-weight-light" data-i18n="notification_service">Notification Service</span>
     </a>
 
     <!-- Sidebar -->
@@ -52,25 +70,25 @@
           <li class="nav-item">
             <a href="/" class="nav-link active" id="nav-dashboard">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Dashboard</p>
+              <p data-i18n="dashboard">Dashboard</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/bots" class="nav-link" id="nav-bots">
               <i class="nav-icon fas fa-robot"></i>
-              <p>Bot Management</p>
+              <p data-i18n="bot_management">Bot Management</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/messages" class="nav-link" id="nav-messages">
               <i class="nav-icon fas fa-envelope"></i>
-              <p>Message History</p>
+              <p data-i18n="message_history">Message History</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/settings" class="nav-link" id="nav-settings">
               <i class="nav-icon fas fa-cog"></i>
-              <p>System Settings</p>
+              <p data-i18n="system_settings">System Settings</p>
             </a>
           </li>
         </ul>
@@ -87,7 +105,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Dashboard</h1>
+            <h1 class="m-0" data-i18n="dashboard">Dashboard</h1>
           </div>
         </div>
       </div>
@@ -103,12 +121,12 @@
             <div class="small-box bg-info">
               <div class="inner">
                 <h3 id="total-bots">0</h3>
-                <p>Total Bots</p>
+                <p data-i18n="total_bots">Total Bots</p>
               </div>
               <div class="icon">
                 <i class="fas fa-robot"></i>
               </div>
-              <a href="/bots" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="/bots" class="small-box-footer"><span data-i18n="more_info">More info</span> <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -117,12 +135,12 @@
             <div class="small-box bg-success">
               <div class="inner">
                 <h3 id="total-messages-sent">0</h3>
-                <p>Messages Sent</p>
+                <p data-i18n="messages_sent">Messages Sent</p>
               </div>
               <div class="icon">
                 <i class="fas fa-paper-plane"></i>
               </div>
-              <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="/messages" class="small-box-footer"><span data-i18n="more_info">More info</span> <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -131,12 +149,12 @@
             <div class="small-box bg-warning">
               <div class="inner">
                 <h3 id="total-messages-pending">0</h3>
-                <p>Messages Pending</p>
+                <p data-i18n="messages_pending">Messages Pending</p>
               </div>
               <div class="icon">
                 <i class="fas fa-clock"></i>
               </div>
-              <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="/messages" class="small-box-footer"><span data-i18n="more_info">More info</span> <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -145,12 +163,12 @@
             <div class="small-box bg-danger">
               <div class="inner">
                 <h3 id="total-messages-failed">0</h3>
-                <p>Messages Failed</p>
+                <p data-i18n="messages_failed">Messages Failed</p>
               </div>
               <div class="icon">
                 <i class="fas fa-exclamation-triangle"></i>
               </div>
-              <a href="/messages" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="/messages" class="small-box-footer"><span data-i18n="more_info">More info</span> <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -161,17 +179,17 @@
           <div class="col-md-6">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Recent Messages</h3>
+                <h3 class="card-title" data-i18n="recent_messages">Recent Messages</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <table class="table table-bordered table-striped">
                   <thead>
                     <tr>
-                      <th>Bot</th>
-                      <th>Status</th>
-                      <th>Sent At</th>
-                      <th>Actions</th>
+                      <th data-i18n="bot">Bot</th>
+                      <th data-i18n="status">Status</th>
+                      <th data-i18n="sent_at">Sent At</th>
+                      <th data-i18n="actions">Actions</th>
                     </tr>
                   </thead>
                   <tbody id="recent-messages">
@@ -188,19 +206,19 @@
           <div class="col-md-6">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Quick Send Message</h3>
+                <h3 class="card-title" data-i18n="quick_send">Quick Send Message</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <form id="quick-send-form">
                   <div class="form-group">
-                    <label for="bot-select">Select Bot</label>
+                    <label for="bot-select" data-i18n="select_bot">Select Bot</label>
                     <select class="form-control" id="bot-select" required>
                       <!-- Bot options will be loaded dynamically -->
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="message-format">Message Format</label>
+                    <label for="message-format" data-i18n="message_format">Message Format</label>
                     <select class="form-control" id="message-format">
                       <option value="text">Text</option>
                       <option value="markdown">Markdown</option>
@@ -210,7 +228,7 @@
                     </small>
                   </div>
                   <div class="form-group">
-                    <label for="message-content">Message</label>
+                    <label for="message-content" data-i18n="message_content">Message</label>
                     <textarea class="form-control" id="message-content" rows="3" required></textarea>
                     <small class="form-text text-muted">
                       For DingTalk: Use @13800138000 to mention specific users by phone number, or @all to mention everyone.<br>
@@ -218,7 +236,7 @@
                     </small>
                     <div class="message-preview" id="message-preview"></div>
                   </div>
-                  <button type="submit" class="btn btn-primary">Send Message</button>
+                  <button type="submit" class="btn btn-primary" data-i18n="send">Send Message</button>
                 </form>
               </div>
               <!-- /.card-body -->
@@ -250,6 +268,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+<!-- i18n JS -->
+<script src="/static/js/i18n.js"></script>
 <!-- Custom JS -->
 <script src="/static/js/script.js"></script>
 
@@ -337,11 +357,11 @@ function loadRecentMessages() {
         messages.forEach(function(message) {
           let statusBadge = '';
           if (message.status === 'sent') {
-            statusBadge = '<span class="badge badge-success">Sent</span>';
+            statusBadge = '<span class="badge badge-success">' + __('sent') + '</span>';
           } else if (message.status === 'failed') {
-            statusBadge = '<span class="badge badge-danger">Failed</span>';
+            statusBadge = '<span class="badge badge-danger">' + __('failed') + '</span>';
           } else if (message.status === 'pending') {
-            statusBadge = '<span class="badge badge-warning">Pending</span>';
+            statusBadge = '<span class="badge badge-warning">' + __('pending') + '</span>';
           } else {
             statusBadge = '<span class="badge badge-secondary">' + message.status + '</span>';
           }
@@ -362,11 +382,11 @@ function loadRecentMessages() {
           `);
         });
       } else {
-        tbody.append('<tr><td colspan="4" class="text-center">No recent messages</td></tr>');
+        tbody.append('<tr><td colspan="4" class="text-center">' + __('no_messages_found') + '</td></tr>');
       }
     },
     error: function() {
-      console.error('Failed to load recent messages');
+      console.error(__('error_occurred'));
     }
   });
 }
@@ -386,11 +406,11 @@ function loadBots() {
           }
         });
       } else {
-        botSelect.append('<option value="" disabled>No active bots found</option>');
+        botSelect.append('<option value="" disabled>' + __('no_bots_available') + '</option>');
       }
     },
     error: function() {
-      console.error('Failed to load bots');
+      console.error(__('error_occurred'));
     }
   });
 }

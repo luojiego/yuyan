@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ if eq (getCurrentLanguage) "zh" }}zh{{ else }}en{{ end }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Message History | Notification Service</title>
+  <!-- data-page-title helps the i18n script know what to translate -->
+  <meta name="page-title" data-i18n="message_history" content="Message History">
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -13,6 +15,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
   <!-- DataTables -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+  <!-- Flag icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
@@ -29,6 +33,20 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      <!-- Language Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="fas fa-language"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a href="#" class="dropdown-item language-option" data-lang="en">
+            <i class="flag-icon flag-icon-us mr-2"></i> English
+          </a>
+          <a href="#" class="dropdown-item language-option" data-lang="zh">
+            <i class="flag-icon flag-icon-cn mr-2"></i> 中文
+          </a>
+        </div>
+      </li>
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
@@ -43,7 +61,7 @@
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <i class="fas fa-bell brand-image ml-3"></i>
-      <span class="brand-text font-weight-light">Notification Service</span>
+      <span class="brand-text font-weight-light" data-i18n="notification_service">Notification Service</span>
     </a>
 
     <!-- Sidebar -->
@@ -54,25 +72,25 @@
           <li class="nav-item">
             <a href="/" class="nav-link" id="nav-dashboard">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Dashboard</p>
+              <p data-i18n="dashboard">Dashboard</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/bots" class="nav-link" id="nav-bots">
               <i class="nav-icon fas fa-robot"></i>
-              <p>Bot Management</p>
+              <p data-i18n="bot_management">Bot Management</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/messages" class="nav-link active" id="nav-messages">
               <i class="nav-icon fas fa-envelope"></i>
-              <p>Message History</p>
+              <p data-i18n="message_history">Message History</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/settings" class="nav-link" id="nav-settings">
               <i class="nav-icon fas fa-cog"></i>
-              <p>System Settings</p>
+              <p data-i18n="system_settings">System Settings</p>
             </a>
           </li>
         </ul>
@@ -89,7 +107,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Message History</h1>
+            <h1 class="m-0" data-i18n="message_history">Message History</h1>
           </div>
         </div>
       </div>
@@ -103,10 +121,10 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Recent Messages</h3>
+                <h3 class="card-title" data-i18n="recent_messages">Recent Messages</h3>
                 <div class="card-tools">
                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-send-message">
-                    <i class="fas fa-paper-plane"></i> Send New Message
+                    <i class="fas fa-paper-plane"></i> <span data-i18n="send_message">Send New Message</span>
                   </button>
                 </div>
               </div>
@@ -116,14 +134,14 @@
                   <thead>
                     <tr>
                       <th>ID</th>
-                      <th>Bot</th>
-                      <th>Type</th>
-                      <th>Content</th>
-                      <th>Format</th>
-                      <th>Mentions</th>
-                      <th>Status</th>
-                      <th>Created At</th>
-                      <th>Actions</th>
+                      <th data-i18n="bot">Bot</th>
+                      <th data-i18n="type">Type</th>
+                      <th data-i18n="content">Content</th>
+                      <th data-i18n="format">Format</th>
+                      <th data-i18n="mentions">Mentions</th>
+                      <th data-i18n="status">Status</th>
+                      <th data-i18n="created_at">Created At</th>
+                      <th data-i18n="actions">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -149,7 +167,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Send Message</h4>
+          <h4 class="modal-title" data-i18n="send_message">Send Message</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -157,13 +175,13 @@
         <div class="modal-body">
           <form id="send-message-form">
             <div class="form-group">
-              <label for="message-bot">Select Bot</label>
+              <label for="message-bot" data-i18n="select_bot">Select Bot</label>
               <select class="form-control" id="message-bot" required>
                 <!-- Bots will be loaded here -->
               </select>
             </div>
             <div class="form-group">
-              <label for="message-format">Message Format</label>
+              <label for="message-format" data-i18n="message_format">Message Format</label>
               <select class="form-control" id="message-format">
                 <option value="text">Text</option>
                 <option value="markdown">Markdown</option>
@@ -173,8 +191,8 @@
               </small>
             </div>
             <div class="form-group">
-              <label for="message-content">Message Content</label>
-              <textarea class="form-control" id="message-content" rows="5" placeholder="Enter message content" required></textarea>
+              <label for="message-content" data-i18n="message_content">Message Content</label>
+              <textarea class="form-control" id="message-content" rows="5" data-i18n-placeholder="message_content" placeholder="Enter message content" required></textarea>
               <small class="form-text text-muted">
                 For DingTalk: Use @13800138000 to mention specific users by phone number, or @all to mention everyone.<br>
                 For Telegram: Use @username to mention specific users (5-32 characters, only letters, numbers, underscores) or @all for a general announcement.
@@ -184,8 +202,8 @@
           </form>
         </div>
         <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="btn-send-message">Send</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="close">Close</button>
+          <button type="button" class="btn btn-primary" id="btn-send-message" data-i18n="send">Send</button>
         </div>
       </div>
       <!-- /.modal-content -->
@@ -271,11 +289,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
-<!-- DataTables -->
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+<!-- DataTables & Plugins -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+<!-- i18n JS -->
+<script src="/static/js/i18n.js"></script>
 <!-- Custom JS -->
 <script src="/static/js/script.js"></script>
 
@@ -359,13 +379,13 @@
             // 设置状态样式
             let statusBadge = '';
             if (message.status === 'sent') {
-              statusBadge = '<span class="badge badge-success">Sent</span>';
+              statusBadge = '<span class="badge badge-success">' + __('sent') + '</span>';
             } else if (message.status === 'failed') {
-              statusBadge = '<span class="badge badge-danger">Failed</span>';
+              statusBadge = '<span class="badge badge-danger">' + __('failed') + '</span>';
             } else if (message.status === 'pending') {
-              statusBadge = '<span class="badge badge-warning">Pending</span>';
+              statusBadge = '<span class="badge badge-warning">' + __('pending') + '</span>';
             } else {
-              statusBadge = '<span class="badge badge-secondary">' + message.status + '</span>';
+              statusBadge = '<span class="badge badge-secondary">' + __(message.status) + '</span>';
             }
             
             // 截断内容
@@ -386,7 +406,7 @@
                   '<span class="badge badge-info">@' + m + '</span>'
                 ).join(' ');
               } else {
-                processedMsg.mentions = '<span class="badge badge-info">' + mentions.length + ' users</span>';
+                processedMsg.mentions = '<span class="badge badge-info">' + mentions.length + ' ' + __('users') + '</span>';
               }
             } else {
               processedMsg.mentions = '-';
@@ -415,9 +435,12 @@
             );
           });
         }
+        
+        // Apply translations to any newly added elements
+        updatePageLanguage();
       },
       error: function(xhr) {
-        alert('Failed to load messages: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+        alert(__('error_occurred') + ': ' + (xhr.responseJSON ? xhr.responseJSON.error : __('unknown')));
       }
     });
   }
@@ -438,11 +461,11 @@
             }
           });
         } else {
-          botSelect.append('<option value="" disabled>No active bots found</option>');
+          botSelect.append('<option value="" disabled>' + __('no_bots_available') + '</option>');
         }
       },
       error: function(xhr) {
-        alert('Failed to load bots: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+        alert(__('error_occurred') + ': ' + (xhr.responseJSON ? xhr.responseJSON.error : __('unknown')));
       }
     });
   }
@@ -454,7 +477,7 @@
     const content = $('#message-content').val();
     
     if (!botId || !format || !content) {
-      alert('Please select a bot, message format, and enter message content');
+      alert(__('please_select_bot_enter_message'));
       return;
     }
     
@@ -473,7 +496,7 @@
         loadMessages();
       },
       error: function(xhr) {
-        alert('Failed to send message: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+        alert(__('error_occurred') + ': ' + (xhr.responseJSON ? xhr.responseJSON.error : __('unknown')));
       }
     });
   }
@@ -505,7 +528,7 @@
           $('#btn-retry-message').hide();
         }
         
-        $('#detail-status').html('<strong class="' + statusClass + '">' + message.status + '</strong>');
+        $('#detail-status').html('<strong class="' + statusClass + '">' + __(message.status) + '</strong>');
         $('#detail-sent-at').text(message.sent_at ? new Date(message.sent_at).toLocaleString() : 'N/A');
         $('#detail-content').text(message.content);
         
@@ -528,7 +551,7 @@
         $('#modal-message-details').modal('show');
       },
       error: function(xhr) {
-        alert('Failed to load message details: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+        alert(__('error_occurred') + ': ' + (xhr.responseJSON ? xhr.responseJSON.error : __('unknown')));
       }
     });
   }
@@ -573,12 +596,12 @@
             loadMessages();
           },
           error: function(xhr) {
-            alert('Failed to retry message: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+            alert(__('error_occurred') + ': ' + (xhr.responseJSON ? xhr.responseJSON.error : __('unknown')));
           }
         });
       },
       error: function(xhr) {
-        alert('Failed to load message details: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+        alert(__('error_occurred') + ': ' + (xhr.responseJSON ? xhr.responseJSON.error : __('unknown')));
       }
     });
   }

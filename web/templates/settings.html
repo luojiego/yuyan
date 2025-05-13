@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ if eq (getCurrentLanguage) "zh" }}zh{{ else }}en{{ end }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>System Settings | Notification Service</title>
+  <title><span data-i18n="system_settings">System Settings</span> | <span data-i18n="notification_service">Notification Service</span></title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
+  <!-- Flag icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
@@ -27,6 +29,20 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      <!-- Language Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="fas fa-language"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a href="#" class="dropdown-item language-option" data-lang="en">
+            <i class="flag-icon flag-icon-us mr-2"></i> English
+          </a>
+          <a href="#" class="dropdown-item language-option" data-lang="zh">
+            <i class="flag-icon flag-icon-cn mr-2"></i> 中文
+          </a>
+        </div>
+      </li>
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
@@ -41,7 +57,7 @@
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <i class="fas fa-bell brand-image ml-3"></i>
-      <span class="brand-text font-weight-light">Notification Service</span>
+      <span class="brand-text font-weight-light" data-i18n="notification_service">Notification Service</span>
     </a>
 
     <!-- Sidebar -->
@@ -52,25 +68,25 @@
           <li class="nav-item">
             <a href="/" class="nav-link" id="nav-dashboard">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Dashboard</p>
+              <p data-i18n="dashboard">Dashboard</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/bots" class="nav-link" id="nav-bots">
               <i class="nav-icon fas fa-robot"></i>
-              <p>Bot Management</p>
+              <p data-i18n="bot_management">Bot Management</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/messages" class="nav-link" id="nav-messages">
               <i class="nav-icon fas fa-envelope"></i>
-              <p>Message History</p>
+              <p data-i18n="message_history">Message History</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="/settings" class="nav-link active" id="nav-settings">
               <i class="nav-icon fas fa-cog"></i>
-              <p>System Settings</p>
+              <p data-i18n="system_settings">System Settings</p>
             </a>
           </li>
         </ul>
@@ -87,7 +103,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">System Settings</h1>
+            <h1 class="m-0" data-i18n="system_settings">System Settings</h1>
           </div>
         </div>
       </div>
@@ -99,39 +115,68 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
+            <!-- Interface Settings -->
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">System Settings</h3>
+                <h3 class="card-title" data-i18n="interface_settings">Interface Settings</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <form id="interface-settings-form">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="language-setting" data-i18n="language">Language</label>
+                        <select class="form-control" id="language-setting">
+                          <option value="en" data-flag="us">English</option>
+                          <option value="zh" data-flag="cn">中文</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary" data-i18n="save">Save Settings</button>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title" data-i18n="general_settings">System Settings</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <form id="settings-form">
                   <!-- Server Settings -->
-                  <h5>Server Settings</h5>
+                  <h5 data-i18n="server_settings">Server Settings</h5>
                   <hr>
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="server-port">Server Port</label>
+                        <label for="server-port" data-i18n="server_port">Server Port</label>
                         <input type="number" class="form-control" id="server-port" min="1" max="65535" required>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="server-mode">Server Mode</label>
+                        <label for="server-mode" data-i18n="server_mode">Server Mode</label>
                         <select class="form-control" id="server-mode">
-                          <option value="debug">Debug</option>
-                          <option value="release">Release</option>
+                          <option value="debug" data-i18n="debug_mode">Debug</option>
+                          <option value="release" data-i18n="release_mode">Release</option>
                         </select>
                       </div>
                     </div>
                   </div>
                   
                   <!-- Database Settings -->
-                  <h5 class="mt-4">Database Settings</h5>
+                  <h5 class="mt-4" data-i18n="database_settings">Database Settings</h5>
                   <hr>
                   <div class="form-group">
-                    <label for="db-type">Database Type</label>
+                    <label for="db-type" data-i18n="database_type">Database Type</label>
                     <select class="form-control" id="db-type">
                       <option value="sqlite">SQLite</option>
                       <option value="mysql">MySQL</option>
@@ -142,7 +187,7 @@
                   <!-- SQLite Settings -->
                   <div id="sqlite-settings">
                     <div class="form-group">
-                      <label for="sqlite-path">Database File Path</label>
+                      <label for="sqlite-path" data-i18n="database_file_path">Database File Path</label>
                       <input type="text" class="form-control" id="sqlite-path">
                     </div>
                   </div>
@@ -152,13 +197,13 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="mysql-host">Host</label>
+                          <label for="mysql-host" data-i18n="host">Host</label>
                           <input type="text" class="form-control" id="mysql-host">
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="mysql-port">Port</label>
+                          <label for="mysql-port" data-i18n="port">Port</label>
                           <input type="number" class="form-control" id="mysql-port" min="1" max="65535">
                         </div>
                       </div>
@@ -166,23 +211,23 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="mysql-username">Username</label>
+                          <label for="mysql-username" data-i18n="username">Username</label>
                           <input type="text" class="form-control" id="mysql-username">
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="mysql-password">Password</label>
+                          <label for="mysql-password" data-i18n="password">Password</label>
                           <input type="password" class="form-control" id="mysql-password">
                         </div>
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="mysql-dbname">Database Name</label>
+                      <label for="mysql-dbname" data-i18n="database_name">Database Name</label>
                       <input type="text" class="form-control" id="mysql-dbname">
                     </div>
                     <div class="form-group">
-                      <label for="mysql-params">Connection Parameters</label>
+                      <label for="mysql-params" data-i18n="connection_parameters">Connection Parameters</label>
                       <input type="text" class="form-control" id="mysql-params">
                     </div>
                   </div>
@@ -192,13 +237,13 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="postgres-host">Host</label>
+                          <label for="postgres-host" data-i18n="host">Host</label>
                           <input type="text" class="form-control" id="postgres-host">
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="postgres-port">Port</label>
+                          <label for="postgres-port" data-i18n="port">Port</label>
                           <input type="number" class="form-control" id="postgres-port" min="1" max="65535">
                         </div>
                       </div>
@@ -206,39 +251,39 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="postgres-username">Username</label>
+                          <label for="postgres-username" data-i18n="username">Username</label>
                           <input type="text" class="form-control" id="postgres-username">
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="postgres-password">Password</label>
+                          <label for="postgres-password" data-i18n="password">Password</label>
                           <input type="password" class="form-control" id="postgres-password">
                         </div>
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="postgres-dbname">Database Name</label>
+                      <label for="postgres-dbname" data-i18n="database_name">Database Name</label>
                       <input type="text" class="form-control" id="postgres-dbname">
                     </div>
                     <div class="form-group">
-                      <label for="postgres-sslmode">SSL Mode</label>
+                      <label for="postgres-sslmode" data-i18n="ssl_mode">SSL Mode</label>
                       <select class="form-control" id="postgres-sslmode">
-                        <option value="disable">Disable</option>
-                        <option value="require">Require</option>
-                        <option value="verify-ca">Verify CA</option>
-                        <option value="verify-full">Verify Full</option>
+                        <option value="disable" data-i18n="disable">Disable</option>
+                        <option value="require" data-i18n="require">Require</option>
+                        <option value="verify-ca" data-i18n="verify_ca">Verify CA</option>
+                        <option value="verify-full" data-i18n="verify_full">Verify Full</option>
                       </select>
                     </div>
                   </div>
                   
                   <div class="alert alert-warning mt-4">
                     <i class="fas fa-exclamation-triangle"></i> 
-                    <strong>Warning:</strong> Changing these settings will require a server restart to take effect.
+                    <strong data-i18n="warning">Warning:</strong> <span data-i18n="settings_restart_warning">Changing these settings will require a server restart to take effect.</span>
                   </div>
                   
                   <div class="form-group mt-4">
-                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="save">Save Settings</button>
                   </div>
                 </form>
               </div>
@@ -258,9 +303,9 @@
   <!-- Main Footer -->
   <footer class="main-footer">
     <div class="float-right d-none d-sm-block">
-      <b>Version</b> 1.0.0
+      <b data-i18n="version">Version</b> 1.0.0
     </div>
-    <strong>Notification Service</strong>
+    <strong data-i18n="notification_service">Notification Service</strong>
   </footer>
 </div>
 <!-- ./wrapper -->
@@ -271,37 +316,83 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+<!-- i18n Support -->
+<script src="/static/js/i18n.js"></script>
 <!-- Custom JS -->
 <script src="/static/js/script.js"></script>
 
 <script>
   $(document).ready(function() {
-    // 设置活动导航项
+    // Set active sidebar item
     $('#nav-settings').addClass('active');
     
-    // 加载当前设置
+    // Load settings
     loadSettings();
     
-    // 数据库类型更改事件
-    $('#db-type').on('change', function() {
-      updateDatabaseForms();
-    });
+    // Set up interface settings
+    setupInterfaceSettings();
     
-    // 表单提交
+    // Handle form submission
     $('#settings-form').on('submit', function(e) {
       e.preventDefault();
       saveSettings();
     });
+    
+    // Handle interface settings form submission
+    $('#interface-settings-form').on('submit', function(e) {
+      e.preventDefault();
+      saveInterfaceSettings();
+    });
+    
+    // Handle database type change
+    $('#db-type').on('change', function() {
+      showDatabaseFields();
+    });
+    
+    // Handle language switching
+    $('.language-option').on('click', function(e) {
+      e.preventDefault();
+      const lang = $(this).data('lang');
+      if (changeLanguage(lang)) {
+        // Update language dropdown
+        $('#language-setting').val(lang);
+      }
+    });
   });
   
-  // 更新数据库设置表单显示
-  function updateDatabaseForms() {
+  // Set up interface settings
+  function setupInterfaceSettings() {
+    // Set current language
+    const currentLang = getCurrentLanguage();
+    $('#language-setting').val(currentLang);
+    
+    // Add flags to language options
+    $('#language-setting option').each(function() {
+      const flag = $(this).data('flag');
+      if (flag) {
+        $(this).prepend(`<i class="flag-icon flag-icon-${flag}"></i> `);
+      }
+    });
+  }
+  
+  // Save interface settings
+  function saveInterfaceSettings() {
+    const lang = $('#language-setting').val();
+    
+    // Change language
+    if (changeLanguage(lang)) {
+      showToast(__('settings_saved'), 'success');
+    }
+  }
+  
+  // Show the relevant database fields based on selected type
+  function showDatabaseFields() {
     const dbType = $('#db-type').val();
     
-    // 隐藏所有数据库设置
+    // Hide all first
     $('#sqlite-settings, #mysql-settings, #postgres-settings').hide();
     
-    // 显示选中的数据库设置
+    // Show the relevant fields
     if (dbType === 'sqlite') {
       $('#sqlite-settings').show();
     } else if (dbType === 'mysql') {
@@ -311,99 +402,91 @@
     }
   }
   
-  // 加载当前设置
+  // Load settings from server
   function loadSettings() {
     $.ajax({
-      url: '/api/config',
+      url: '/api/settings',
       method: 'GET',
-      success: function(config) {
-        // 服务器设置
-        $('#server-port').val(config.server.port);
-        $('#server-mode').val(config.server.mode);
-        
-        // 数据库设置
-        $('#db-type').val(config.database.type);
-        updateDatabaseForms();
-        
-        // SQLite设置
-        if (config.database.sqlite) {
-          $('#sqlite-path').val(config.database.sqlite.path);
-        }
-        
-        // MySQL设置
-        if (config.database.mysql) {
-          $('#mysql-host').val(config.database.mysql.host);
-          $('#mysql-port').val(config.database.mysql.port);
-          $('#mysql-username').val(config.database.mysql.username);
-          $('#mysql-password').val(config.database.mysql.password);
-          $('#mysql-dbname').val(config.database.mysql.dbname);
-          $('#mysql-params').val(config.database.mysql.params);
-        }
-        
-        // PostgreSQL设置
-        if (config.database.postgres) {
-          $('#postgres-host').val(config.database.postgres.host);
-          $('#postgres-port').val(config.database.postgres.port);
-          $('#postgres-username').val(config.database.postgres.username);
-          $('#postgres-password').val(config.database.postgres.password);
-          $('#postgres-dbname').val(config.database.postgres.dbname);
-          $('#postgres-sslmode').val(config.database.postgres.sslmode);
+      success: function(settings) {
+        if (settings) {
+          // Server settings
+          $('#server-port').val(settings.server_port || 8090);
+          $('#server-mode').val(settings.server_mode || 'debug');
+          
+          // Database settings
+          $('#db-type').val(settings.database_type || 'sqlite');
+          
+          // SQLite settings
+          $('#sqlite-path').val(settings.database_path || 'data.db');
+          
+          // MySQL settings
+          $('#mysql-host').val(settings.mysql_host || 'localhost');
+          $('#mysql-port').val(settings.mysql_port || 3306);
+          $('#mysql-username').val(settings.mysql_username || '');
+          $('#mysql-password').val(settings.mysql_password || '');
+          $('#mysql-dbname').val(settings.mysql_database || '');
+          $('#mysql-params').val(settings.mysql_params || '');
+          
+          // PostgreSQL settings
+          $('#postgres-host').val(settings.postgres_host || 'localhost');
+          $('#postgres-port').val(settings.postgres_port || 5432);
+          $('#postgres-username').val(settings.postgres_username || '');
+          $('#postgres-password').val(settings.postgres_password || '');
+          $('#postgres-dbname').val(settings.postgres_database || '');
+          $('#postgres-sslmode').val(settings.postgres_sslmode || 'disable');
+          
+          // Show relevant database fields
+          showDatabaseFields();
         }
       },
       error: function(xhr) {
-        alert('Failed to load settings: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+        handleAjaxError(xhr);
       }
     });
   }
   
-  // 保存设置
+  // Save settings to server
   function saveSettings() {
     const dbType = $('#db-type').val();
-    const config = {
-      server: {
-        port: parseInt($('#server-port').val()),
-        mode: $('#server-mode').val()
-      },
-      database: {
-        type: dbType
-      }
+    
+    const settings = {
+      // Server settings
+      server_port: parseInt($('#server-port').val()),
+      server_mode: $('#server-mode').val(),
+      
+      // Database settings
+      database_type: dbType
     };
     
-    // 添加对应数据库类型的设置
+    // Add database-specific settings
     if (dbType === 'sqlite') {
-      config.database.sqlite = {
-        path: $('#sqlite-path').val()
-      };
+      settings.database_path = $('#sqlite-path').val();
     } else if (dbType === 'mysql') {
-      config.database.mysql = {
-        host: $('#mysql-host').val(),
-        port: parseInt($('#mysql-port').val()),
-        username: $('#mysql-username').val(),
-        password: $('#mysql-password').val(),
-        dbname: $('#mysql-dbname').val(),
-        params: $('#mysql-params').val()
-      };
+      settings.mysql_host = $('#mysql-host').val();
+      settings.mysql_port = parseInt($('#mysql-port').val());
+      settings.mysql_username = $('#mysql-username').val();
+      settings.mysql_password = $('#mysql-password').val();
+      settings.mysql_database = $('#mysql-dbname').val();
+      settings.mysql_params = $('#mysql-params').val();
     } else if (dbType === 'postgres') {
-      config.database.postgres = {
-        host: $('#postgres-host').val(),
-        port: parseInt($('#postgres-port').val()),
-        username: $('#postgres-username').val(),
-        password: $('#postgres-password').val(),
-        dbname: $('#postgres-dbname').val(),
-        sslmode: $('#postgres-sslmode').val()
-      };
+      settings.postgres_host = $('#postgres-host').val();
+      settings.postgres_port = parseInt($('#postgres-port').val());
+      settings.postgres_username = $('#postgres-username').val();
+      settings.postgres_password = $('#postgres-password').val();
+      settings.postgres_database = $('#postgres-dbname').val();
+      settings.postgres_sslmode = $('#postgres-sslmode').val();
     }
     
     $.ajax({
-      url: '/api/config',
-      method: 'PUT',
+      url: '/api/settings',
+      method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify(config),
+      data: JSON.stringify(settings),
       success: function() {
-        alert('Settings saved successfully! Please restart the server for changes to take effect.');
+        showToast(__('settings_saved'), 'success');
       },
       error: function(xhr) {
-        alert('Failed to save settings: ' + (xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error'));
+        handleAjaxError(xhr);
       }
     });
   }

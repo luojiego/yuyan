@@ -18,7 +18,7 @@ function truncateText(text, maxLength) {
 // Show loading overlay
 function showLoading() {
   if (!$('#loading-overlay').length) {
-    $('body').append('<div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;"><div class="spinner-border text-light" role="status"><span class="sr-only">Loading...</span></div></div>');
+    $('body').append('<div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;"><div class="spinner-border text-light" role="status"><span class="sr-only">' + __('loading') + '</span></div></div>');
   } else {
     $('#loading-overlay').show();
   }
@@ -38,7 +38,7 @@ function showToast(message, type = 'success') {
   const toast = $(`
     <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
       <div class="toast-header bg-${type} text-white">
-        <strong class="mr-auto">Notification</strong>
+        <strong class="mr-auto">${__('notification')}</strong>
         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -62,7 +62,7 @@ function showToast(message, type = 'success') {
 function handleAjaxError(xhr) {
   hideLoading();
   
-  let errorMessage = 'An error occurred';
+  let errorMessage = __('error_occurred');
   if (xhr.responseJSON && xhr.responseJSON.error) {
     errorMessage = xhr.responseJSON.error;
   } else if (xhr.statusText) {
@@ -80,11 +80,14 @@ function copyToClipboard(text) {
   textarea.select();
   document.execCommand('copy');
   document.body.removeChild(textarea);
-  showToast('Copied to clipboard!');
+  showToast(__('copied_clipboard'));
 }
 
 // Add event handlers after page load
 $(document).ready(function() {
+  // Apply language settings
+  updatePageLanguage();
+  
   // Add copy button to pre elements
   $('pre').each(function() {
     const pre = $(this);
@@ -100,7 +103,7 @@ $(document).ready(function() {
   
   // Add confirm dialog to delete buttons
   $(document).on('click', '.btn-delete', function(e) {
-    if (!confirm('Are you sure you want to delete this item?')) {
+    if (!confirm(__('confirm_delete'))) {
       e.preventDefault();
       e.stopPropagation();
       return false;
@@ -120,6 +123,29 @@ $(document).ready(function() {
     e.preventDefault();
     sendQuickMessage();
   });
+  
+  // Handle language switching
+  $('.language-option').on('click', function(e) {
+    e.preventDefault();
+    const lang = $(this).data('lang');
+    if (changeLanguage(lang)) {
+      // Language changed successfully
+      console.log('Language changed to ' + lang);
+    }
+  });
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', function(e) {
+    console.log('Language changed event received: ' + e.detail.language);
+    // Update any dynamic content that needs language updates
+    if (window.location.pathname === '/') {
+      loadDashboardData();
+    } else if (window.location.pathname.includes('/bots')) {
+      loadBots();
+    } else if (window.location.pathname.includes('/messages')) {
+      loadMessages();
+    }
+  });
 });
 
 // Dashboard functions
@@ -136,11 +162,11 @@ function loadDashboardData() {
       if (botSelect.length) {
         botSelect.empty();
         if (bots.length === 0) {
-          botSelect.append('<option value="">No bots available</option>');
+          botSelect.append(`<option value="">${__('no_bots_available')}</option>`);
         } else {
           bots.forEach(function(bot) {
             if (bot.is_active) {
-              botSelect.append(`<option value="${bot.id}">${bot.name} (${bot.type})</option>`);
+              botSelect.append(`<option value="${bot.id}">${bot.name} (${__(bot.type)})</option>`);
             }
           });
         }
@@ -194,7 +220,7 @@ function loadDashboardData() {
             if (message.status === 'pending') statusClass = 'warning';
             
             // Get bot name, using message.bot.name if available, otherwise try message.bot_name or 'Unknown'
-            let botName = 'Unknown';
+            let botName = __('unknown');
             if (message.bot && message.bot.name) {
               botName = message.bot.name;
             } else if (message.bot_name) {
@@ -204,7 +230,7 @@ function loadDashboardData() {
             const row = `
               <tr>
                 <td>${botName}</td>
-                <td><span class="badge badge-${statusClass}">${message.status}</span></td>
+                <td><span class="badge badge-${statusClass}">${__(message.status)}</span></td>
                 <td>${new Date(message.sent_at).toLocaleString()}</td>
                 <td>
                   <a href="/messages?id=${message.id}" class="btn btn-sm btn-info">
@@ -216,9 +242,12 @@ function loadDashboardData() {
             tbody.append(row);
           });
         } else {
-          tbody.append('<tr><td colspan="4" class="text-center">No messages found</td></tr>');
+          tbody.append(`<tr><td colspan="4" class="text-center">${__('no_messages_found')}</td></tr>`);
         }
       }
+      
+      // Apply translations to any newly added elements
+      updatePageLanguage();
     },
     error: function(xhr) {
       handleAjaxError(xhr);
@@ -250,7 +279,7 @@ function sendQuickMessage() {
   
   if (!botId || !content) {
     hideLoading();
-    showToast('Please select a bot and enter a message', 'danger');
+    showToast(__('please_select_bot_enter_message'), 'danger');
     return;
   }
   
@@ -265,7 +294,7 @@ function sendQuickMessage() {
     }),
     success: function(response) {
       hideLoading();
-      showToast('Message sent successfully!', 'success');
+      showToast(__('message_sent_successfully'), 'success');
       $('#message-content').val(''); // Clear the message content
       loadDashboardData(); // Reload dashboard data to show the new message
     },
