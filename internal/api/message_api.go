@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"yuyan/internal/models"
 	"yuyan/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -37,7 +38,7 @@ func (api *MessageAPI) GetAllMessages(c *gin.Context) {
 	var err error
 
 	if botType != "" {
-		messages, err = api.MessageService.GetMessagesByBotType(botType)
+		messages, err = api.MessageService.GetMessagesByBotType(models.BotType(botType))
 	} else if botIDStr != "" {
 		botID, err := strconv.ParseUint(botIDStr, 10, 64)
 		if err != nil {
