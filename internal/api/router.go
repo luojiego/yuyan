@@ -1,6 +1,7 @@
 package api
 
 import (
+	"yuyan/internal/middleware"
 	"yuyan/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -44,31 +45,39 @@ func SetupRouter(r *gin.Engine) {
 		api.PUT("/config", configAPI.UpdateConfig)
 	}
 
-	// Serve static files
-	// r.Static("/static", "./web/static")  // Removed to avoid conflict with main.go
-
-	// Web routes
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(200, "index.html", gin.H{
-			"title": "Dashboard",
+	// Web routes with authentication
+	admin := r.Group("/", middleware.BasicAuth())
+	{
+		// Landing page can be accessed without auth
+		r.GET("/", func(c *gin.Context) {
+			c.HTML(200, "index.html", gin.H{
+				"title": "Dashboard",
+			})
 		})
-	})
 
-	r.GET("/bots", func(c *gin.Context) {
-		c.HTML(200, "bots.html", gin.H{
-			"title": "Bot Management",
+		// Protected admin routes
+		admin.GET("/bots", func(c *gin.Context) {
+			c.HTML(200, "bots.html", gin.H{
+				"title": "Bot Management",
+			})
 		})
-	})
 
-	r.GET("/messages", func(c *gin.Context) {
-		c.HTML(200, "messages.html", gin.H{
-			"title": "Message History",
+		admin.GET("/messages", func(c *gin.Context) {
+			c.HTML(200, "messages.html", gin.H{
+				"title": "Message History",
+			})
 		})
-	})
 
-	r.GET("/settings", func(c *gin.Context) {
-		c.HTML(200, "settings.html", gin.H{
-			"title": "System Settings",
+		admin.GET("/settings", func(c *gin.Context) {
+			c.HTML(200, "settings.html", gin.H{
+				"title": "System Settings",
+			})
 		})
-	})
+
+		admin.GET("/docs", func(c *gin.Context) {
+			c.HTML(200, "docs.html", gin.H{
+				"title": "Documentation",
+			})
+		})
+	}
 }

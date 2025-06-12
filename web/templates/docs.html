@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="{{ if eq (getCurrentLanguage) "zh" }}zh{{ else }}en{{ end }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Documentation | Notification Service</title>
+    <!-- data-page-title helps the i18n script know what to translate -->
+    <meta name="page-title" data-i18n="documentation" content="Documentation">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
+    <!-- Flag icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <!-- Prism.js -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/themes/prism.css" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
+        </ul>
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+            <!-- Language Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="fas fa-language"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a href="#" class="dropdown-item language-option" data-lang="en">
+                        <i class="flag-icon flag-icon-us mr-2"></i> English
+                    </a>
+                    <a href="#" class="dropdown-item language-option" data-lang="zh">
+                        <i class="flag-icon flag-icon-cn mr-2"></i> 中文
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="/" class="brand-link">
+            <i class="fas fa-bell brand-image ml-3"></i>
+            <span class="brand-text font-weight-light" data-i18n="notification_service">Notification Service</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link" id="nav-dashboard">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p data-i18n="dashboard">Dashboard</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/bots" class="nav-link" id="nav-bots">
+                            <i class="nav-icon fas fa-robot"></i>
+                            <p data-i18n="bot_management">Bot Management</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/messages" class="nav-link" id="nav-messages">
+                            <i class="nav-icon fas fa-envelope"></i>
+                            <p data-i18n="message_history">Message History</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/settings" class="nav-link" id="nav-settings">
+                            <i class="nav-icon fas fa-cog"></i>
+                            <p data-i18n="system_settings">System Settings</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/docs" class="nav-link active" id="nav-docs">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p data-i18n="documentation">Documentation</p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0" data-i18n="documentation">Documentation</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- Table of Contents -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h3 class="card-title" data-i18n="table_of_contents">Table of Contents</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <nav>
+                                            <ul class="nav flex-column">
+                                                <li class="nav-item">
+                                                    <a href="#overview" class="nav-link text-primary" data-i18n="overview">Overview</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="#features" class="nav-link text-primary" data-i18n="features">Features</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="#api-usage" class="nav-link text-primary" data-i18n="api_usage">API Usage</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="#bot-configuration" class="nav-link text-primary" data-i18n="bot_configuration">Bot Configuration</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+
+                                <!-- Overview Section -->
+                                <div class="card mb-4" id="overview">
+                                    <div class="card-header">
+                                        <h3 class="card-title" data-i18n="overview">Overview</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-muted" data-i18n="overview_description">
+                                            Yuyan is a powerful notification service that enables you to send messages to multiple messaging platforms through a unified API.
+                                            It currently supports DingTalk and Telegram, with a clean web interface for configuration and management.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Features Section -->
+                                <div class="card mb-4" id="features">
+                                    <div class="card-header">
+                                        <h3 class="card-title" data-i18n="features">Features</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group">
+                                            <li class="list-group-item" data-i18n="feature_multi_platform">Multi-platform support (DingTalk, Telegram)</li>
+                                            <li class="list-group-item" data-i18n="feature_unified_api">Unified API for sending notifications</li>
+                                            <li class="list-group-item" data-i18n="feature_bot_management">Bot configuration management</li>
+                                            <li class="list-group-item" data-i18n="feature_message_tracking">Message history and delivery status tracking</li>
+                                            <li class="list-group-item" data-i18n="feature_web_interface">Web interface for easy management</li>
+                                            <li class="list-group-item" data-i18n="feature_database_support">Support for multiple database types</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- API Usage Section -->
+                                <div class="card mb-4" id="api-usage">
+                                    <div class="card-header">
+                                        <h3 class="card-title" data-i18n="api_usage">API Usage</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Message Format Section -->
+                                        <div class="card bg-light mb-4">
+                                            <div class="card-header">
+                                                <h4 class="card-title" data-i18n="message_formats">Message Formats</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="text-muted" data-i18n="message_formats_description">
+                                                    The API supports three message formats:
+                                                </p>
+                                                <ul class="list-group mb-3">
+                                                    <li class="list-group-item">
+                                                        <strong>text</strong> - Plain text messages without formatting
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <strong>html</strong> - Messages with HTML formatting and mentions
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <strong>markdown</strong> - Messages with Markdown formatting
+                                                    </li>
+                                                </ul>
+                                                
+                                                <h5 class="mt-4" data-i18n="basic_message">Basic Message</h5>
+                                                <ul class="nav nav-tabs" id="basicMessageTabs" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="curl-basic-tab" data-toggle="tab" href="#curl-basic" role="tab">curl</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="python-basic-tab" data-toggle="tab" href="#python-basic" role="tab">Python</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="go-basic-tab" data-toggle="tab" href="#go-basic" role="tab">Go</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content mt-2" id="basicMessageTabContent">
+                                                    <div class="tab-pane fade show active" id="curl-basic" role="tabpanel">
+                                                        <pre class="language-bash"><code>curl -X POST \
+  http://localhost:8090/api/messages \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bot_id": 4,
+    "content": "Hello, this is a test message!",
+    "format": "text"
+  }'</code></pre>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="python-basic" role="tabpanel">
+                                                        <pre class="language-python"><code>import requests
+
+url = "http://localhost:8090/api/messages"
+payload = {
+    "bot_id": 4,
+    "content": "Hello, this is a test message!",
+    "format": "text"
+}
+headers = {
+    "Content-Type": "application/json"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())</code></pre>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="go-basic" role="tabpanel">
+                                                        <pre class="language-go"><code>package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    url := "http://localhost:8090/api/messages"
+    payload := map[string]interface{}{
+        "bot_id":  4,
+        "content": "Hello, this is a test message!",
+        "format":  "text",
+    }
+    
+    jsonData, err := json.Marshal(payload)
+    if err != nil {
+        panic(err)
+    }
+    
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+    if err != nil {
+        panic(err)
+    }
+    
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+    
+    // Read and print response
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Println(result)
+}</code></pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- User Mentions Section -->
+                                        <div class="card bg-light mb-4">
+                                            <div class="card-header">
+                                                <h4 class="card-title" data-i18n="user_mentions">User Mentions</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="text-muted" data-i18n="mentions_description">
+                                                    You can mention users in three ways:
+                                                </p>
+                                                <ul class="list-group mb-3">
+                                                    <li class="list-group-item">
+                                                        <strong>@username</strong> - Mention specific users
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <strong>@all</strong> - Mention all users in a group
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <strong>@phone_number</strong> - Mention users by phone number (DingTalk only)
+                                                    </li>
+                                                </ul>
+
+                                                <h5 class="mt-4" data-i18n="mention_examples">Mention Examples</h5>
+                                                <ul class="nav nav-tabs" id="mentionExamplesTabs" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="curl-mention-tab" data-toggle="tab" href="#curl-mention" role="tab">curl</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="python-mention-tab" data-toggle="tab" href="#python-mention" role="tab">Python</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="go-mention-tab" data-toggle="tab" href="#go-mention" role="tab">Go</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content mt-2" id="mentionExamplesTabContent">
+                                                    <div class="tab-pane fade show active" id="curl-mention" role="tabpanel">
+                                                        <pre class="language-bash"><code># Mention specific users
+curl -X POST \
+  http://localhost:8090/api/messages \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bot_id": 4,
+    "content": "Hey @wolf1688, please check this! cc: @learnjie",
+    "format": "html"
+  }'
+
+# Mention all users
+curl -X POST \
+  http://localhost:8090/api/messages \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bot_id": 4,
+    "content": "Important announcement @all: Team meeting at 3 PM!",
+    "format": "html"
+  }'</code></pre>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="python-mention" role="tabpanel">
+                                                        <pre class="language-python"><code>import requests
+
+def send_message(content):
+    url = "http://localhost:8090/api/messages"
+    payload = {
+        "bot_id": 4,
+        "content": content,
+        "format": "html"
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json()
+
+# Mention specific users
+response = send_message("Hey @wolf1688, please check this! cc: @learnjie")
+print(response)
+
+# Mention all users
+response = send_message("Important announcement @all: Team meeting at 3 PM!")
+print(response)</code></pre>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="go-mention" role="tabpanel">
+                                                        <pre class="language-go"><code>package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func sendMessage(content string) map[string]interface{} {
+    url := "http://localhost:8090/api/messages"
+    payload := map[string]interface{}{
+        "bot_id":  4,
+        "content": content,
+        "format":  "html",
+    }
+    
+    jsonData, err := json.Marshal(payload)
+    if err != nil {
+        panic(err)
+    }
+    
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+    if err != nil {
+        panic(err)
+    }
+    
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    return result
+}
+
+func main() {
+    // Mention specific users
+    result := sendMessage("Hey @wolf1688, please check this! cc: @learnjie")
+    fmt.Println("Mention users:", result)
+    
+    // Mention all users
+    result = sendMessage("Important announcement @all: Team meeting at 3 PM!")
+    fmt.Println("Mention all:", result)
+}</code></pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Response Format Section -->
+                                        <div class="card bg-light mb-4">
+                                            <div class="card-header">
+                                                <h4 class="card-title" data-i18n="response_format">Response Format</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 data-i18n="successful_response">Successful Response</h5>
+                                                <pre class="language-json"><code>{
+  "code": 200,
+  "message": "Message sent successfully",
+  "data": {
+    "message_id": "12345",
+    "status": "sent"
+  }
+}</code></pre>
+
+                                                <h5 class="mt-4" data-i18n="error_response">Error Response</h5>
+                                                <pre class="language-json"><code>{
+  "code": 400,
+  "message": "Invalid request",
+  "error": "Bot not found or inactive"
+}</code></pre>
+                                            </div>
+                                        </div>
+
+                                        <!-- Common Use Cases Section -->
+                                        <div class="card bg-light">
+                                            <div class="card-header">
+                                                <h4 class="card-title" data-i18n="common_use_cases">Common Use Cases</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 data-i18n="markdown_message">Markdown Message</h5>
+                                                <ul class="nav nav-tabs" id="markdownExampleTabs" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="curl-markdown-tab" data-toggle="tab" href="#curl-markdown" role="tab">curl</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="python-markdown-tab" data-toggle="tab" href="#python-markdown" role="tab">Python</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="go-markdown-tab" data-toggle="tab" href="#go-markdown" role="tab">Go</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content mt-2" id="markdownExampleTabContent">
+                                                    <div class="tab-pane fade show active" id="curl-markdown" role="tabpanel">
+                                                        <pre class="language-bash"><code>curl -X POST \
+  http://localhost:8090/api/messages \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bot_id": 4,
+    "content": "# System Alert\n\n**Server:** web-01\n**Status:** Critical\n\n- CPU Usage: 95%\n- Memory: 87%\n- Disk: 92%\n\nPlease check immediately!",
+    "format": "markdown"
+  }'</code></pre>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="python-markdown" role="tabpanel">
+                                                        <pre class="language-python"><code>import requests
+
+url = "http://localhost:8090/api/messages"
+content = """# System Alert
+
+**Server:** web-01
+**Status:** Critical
+
+- CPU Usage: 95%
+- Memory: 87%
+- Disk: 92%
+
+Please check immediately!"""
+
+payload = {
+    "bot_id": 4,
+    "content": content,
+    "format": "markdown"
+}
+headers = {
+    "Content-Type": "application/json"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())</code></pre>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="go-markdown" role="tabpanel">
+                                                        <pre class="language-go"><code>package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    url := "http://localhost:8090/api/messages"
+    content := `# System Alert
+
+**Server:** web-01
+**Status:** Critical
+
+- CPU Usage: 95%
+- Memory: 87%
+- Disk: 92%
+
+Please check immediately!`
+
+    payload := map[string]interface{}{
+        "bot_id":  4,
+        "content": content,
+        "format":  "markdown",
+    }
+    
+    jsonData, err := json.Marshal(payload)
+    if err != nil {
+        panic(err)
+    }
+    
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+    if err != nil {
+        panic(err)
+    }
+    
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Println(result)
+}</code></pre>
+                                                    </div>
+                                                </div>
+
+                                                <h5 class="mt-4" data-i18n="html_message">HTML Message</h5>
+                                                <pre class="language-bash"><code>curl -X POST \
+  http://localhost:8090/api/messages \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bot_id": 4,
+    "content": "<b>Deployment Status</b><br><br>✅ Build successful<br>✅ Tests passed<br>✅ Deployed to production<br><br>Version: <code>v1.2.3</code>",
+    "format": "html"
+  }'</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bot Configuration Section -->
+                                <div class="card mb-4" id="bot-configuration">
+                                    <div class="card-header">
+                                        <h3 class="card-title" data-i18n="bot_configuration">Bot Configuration</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- DingTalk Configuration -->
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                <h4 class="card-title" data-i18n="dingtalk_configuration">DingTalk Configuration</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="text-muted" data-i18n="dingtalk_config_description">To configure a DingTalk bot, you'll need:</p>
+                                                <ul class="list-group">
+                                                    <li class="list-group-item" data-i18n="dingtalk_webhook_requirement">Webhook URL from DingTalk custom robot configuration</li>
+                                                    <li class="list-group-item" data-i18n="dingtalk_secret_requirement">Optional secret for signing requests</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <!-- Telegram Configuration -->
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title" data-i18n="telegram_configuration">Telegram Configuration</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="text-muted" data-i18n="telegram_config_description">To configure a Telegram bot, you'll need:</p>
+                                                <ul class="list-group">
+                                                    <li class="list-group-item" data-i18n="telegram_token_requirement">Bot token from the BotFather</li>
+                                                    <li class="list-group-item" data-i18n="telegram_chatid_requirement">Chat ID where messages will be sent</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <div class="float-right d-none d-sm-block">
+            <b data-i18n="version">Version</b> 1.0.0
+        </div>
+        <strong data-i18n="notification_service">Notification Service</strong>
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+<!-- Prism.js -->
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/prism.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-bash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-go.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-json.min.js"></script>
+<!-- i18n Support -->
+<script src="/static/js/i18n.js"></script>
+<!-- Custom JS -->
+<script src="/static/js/script.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Set active nav item
+    $('#nav-docs').addClass('active');
+    
+    // Handle language switching
+    $('.language-option').on('click', function(e) {
+        e.preventDefault();
+        const lang = $(this).data('lang');
+        changeLanguage(lang);
+    });
+    
+    // Initialize Prism.js
+    Prism.highlightAll();
+});
+</script>
+</body>
+</html> 

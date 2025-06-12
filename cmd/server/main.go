@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	log "github.com/luojiego/slogx"
 	"html/template"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,12 +23,12 @@ func init() {
 
 	// Create default config file if it doesn't exist
 	if err := createDefaultConfigIfNotExists(); err != nil {
-		log.Fatalf("Failed to create default config: %v", err)
+		log.Fatal("Failed to create default config", "error", err)
 	}
 
 	// Read configuration
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading config file: %v", err)
+		log.Fatal("Error reading config file", "error", err)
 	}
 
 	// Set default values
@@ -51,14 +51,14 @@ func main() {
 		dataDir := filepath.Dir(dbPath)
 		if _, err := os.Stat(dataDir); os.IsNotExist(err) {
 			if err := os.MkdirAll(dataDir, 0755); err != nil {
-				log.Fatalf("Failed to create data directory: %v", err)
+				log.Fatal("Failed to create data directory", "error", err)
 			}
 		}
 	}
 
 	// Initialize database
 	if err := database.InitDB(); err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
+		log.Fatal("Failed to initialize database", "error", err)
 	}
 
 	// Initialize Gin router
@@ -87,9 +87,9 @@ func main() {
 	port := viper.GetInt("server.port")
 	addr := fmt.Sprintf(":%d", port)
 
-	log.Printf("Starting server on http://localhost%s", addr)
+	log.Info("Starting server on", "addr", addr)
 	if err := r.Run(addr); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+		log.Fatal("Failed to start server", "error", err)
 	}
 }
 

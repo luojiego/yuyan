@@ -9,6 +9,8 @@ import (
 	"yuyan/internal/service"
 
 	"github.com/gin-gonic/gin"
+
+	log "github.com/luojiego/slogx"
 )
 
 // MessageAPI handles message-related API endpoints
@@ -134,6 +136,7 @@ func (api *MessageAPI) GetMessageByID(c *gin.Context) {
 func (api *MessageAPI) SendMessage(c *gin.Context) {
 	var req MessageRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Error("Failed to bind JSON", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -145,6 +148,7 @@ func (api *MessageAPI) SendMessage(c *gin.Context) {
 
 	message, err := api.MessageService.SendMessage(req.BotID, req.Content, req.Format)
 	if err != nil {
+		log.Error("Failed to send message", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

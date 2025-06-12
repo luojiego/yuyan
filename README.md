@@ -108,15 +108,61 @@ The service provides the following API endpoints:
 
 To send a notification, use the `/api/messages` endpoint:
 
+Basic example:
 ```bash
 curl -X POST \
-  http://localhost:8080/api/messages \
+  http://localhost:8090/api/messages \
   -H 'Content-Type: application/json' \
   -d '{
-    "bot_id": 1,
-    "content": "Hello, this is a test message!"
+    "bot_id": 4,
+    "content": "Hello, this is a test message!",
+    "format": "text"
   }'
 ```
+
+Telegram specific examples with @mentions:
+
+1. Message with user mentions:
+```bash
+curl -X POST \
+  http://localhost:8090/api/messages \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bot_id": 4,
+    "content": "Hey @wolf1688, please check this! cc: @learnjie",
+    "format": "html"
+  }'
+```
+
+2. Message with @all mention:
+```bash
+curl -X POST \
+  http://localhost:8090/api/messages \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bot_id": 4,
+    "content": "Important announcement @all: Team meeting at 3 PM!",
+    "format": "html"
+  }'
+```
+
+3. Message with phone number mention:
+```bash
+curl -X POST \
+  http://localhost:8090/api/messages \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "bot_id": 4,
+    "content": "Please contact @1365754902 for support.",
+    "format": "html"
+  }'
+```
+
+Note: When using Telegram bot with mentions:
+- User mentions (@username) will be converted to clickable links
+- @all will be replaced with a highlighted announcement message
+- Phone number mentions will be highlighted but not clickable
+- Set "format": "html" when using mentions to ensure proper formatting
 
 ## Bot Configuration
 

@@ -2,7 +2,8 @@ package database
 
 import (
 	"fmt"
-	"log"
+
+	log "github.com/luojiego/slogx"
 
 	"yuyan/internal/models"
 
@@ -27,7 +28,7 @@ func InitDB() error {
 		if err != nil {
 			return fmt.Errorf("failed to connect to SQLite database: %w", err)
 		}
-		log.Println("Connected to SQLite database")
+		log.Debug("Connected to SQLite database")
 
 	case "mysql":
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
@@ -42,7 +43,7 @@ func InitDB() error {
 		if err != nil {
 			return fmt.Errorf("failed to connect to MySQL database: %w", err)
 		}
-		log.Println("Connected to MySQL database")
+		log.Debug("Connected to MySQL database")
 
 	case "postgres":
 		dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
@@ -57,7 +58,7 @@ func InitDB() error {
 		if err != nil {
 			return fmt.Errorf("failed to connect to PostgreSQL database: %w", err)
 		}
-		log.Println("Connected to PostgreSQL database")
+		log.Debug("Connected to PostgreSQL database")
 
 	default:
 		return fmt.Errorf("unsupported database type: %s", dbType)

@@ -1,9 +1,12 @@
 module yuyan
 
-go 1.20
+go 1.21
+
+toolchain go1.24.2
 
 require (
 	github.com/gin-gonic/gin v1.9.1
+	github.com/luojiego/slogx v0.1.2
 	github.com/spf13/viper v1.16.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/driver/postgres v1.5.2
@@ -52,5 +55,6 @@ require (
 	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
