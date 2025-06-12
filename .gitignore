@@ -41,3 +41,4 @@ tmp/
 config/config.yaml 
 yuyan-server
 main
+rsync_code.sh

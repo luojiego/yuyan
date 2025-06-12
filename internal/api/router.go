@@ -48,14 +48,13 @@ func SetupRouter(r *gin.Engine) {
 	// Web routes with authentication
 	admin := r.Group("/", middleware.BasicAuth())
 	{
-		// Landing page can be accessed without auth
-		r.GET("/", func(c *gin.Context) {
+		// Protected admin routes
+		admin.GET("/", func(c *gin.Context) {
 			c.HTML(200, "index.html", gin.H{
 				"title": "Dashboard",
 			})
 		})
 
-		// Protected admin routes
 		admin.GET("/bots", func(c *gin.Context) {
 			c.HTML(200, "bots.html", gin.H{
 				"title": "Bot Management",
