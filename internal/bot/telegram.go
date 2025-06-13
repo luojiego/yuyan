@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"yuyan/internal/models"
 
@@ -36,13 +37,25 @@ func NewTelegramBot(bot models.Bot) *TelegramBot {
 	}
 }
 
+// validateMessage checks if the message is valid
+func (t *TelegramBot) validateMessage(message string) error {
+	if !utf8.ValidString(message) {
+		return fmt.Errorf("invalid UTF-8 encoding in message")
+	}
+
+	if len(message) > 4096 {
+		return fmt.Errorf("message exceeds Telegram's 4096 character limit")
+	}
+
+	return nil
+}
+
 // parseTelegramMentions extracts @mention information from a message and formats for Telegram
 // Returns a formatted message with proper HTML tags for mentions
 func parseTelegramMentions(message string) string {
-	// Check for @all mention (Telegram doesn't have a direct equivalent,
-	// we'll replace with a general announcement message)
+	// Check for @all mention and add announcement at the beginning if present
 	if strings.Contains(message, "@all") {
-		message = strings.Replace(message, "@all", "<b>📢 Attention Everyone! 📢</b>", -1)
+		message = "<b>📢 Attention Everyone! 📢</b><br>" + message
 	}
 
 	// Regular expression to find @mentions with usernames
@@ -60,18 +73,20 @@ func parseTelegramMentions(message string) string {
 
 // Send sends a message through the Telegram bot
 func (t *TelegramBot) Send(message string) error {
-	// Telegram API endpoint for sending messages
-	apiURL := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", t.Bot.Token)
+	// Validate message
+	if err := t.validateMessage(message); err != nil {
+		return fmt.Errorf("message validation failed: %w", err)
+	}
 
 	// Process mentions in the message
 	formattedMessage := parseTelegramMentions(message)
 
 	// Create message payload
 	msg := TelegramMessage{
-		ChatID:                t.Bot.WebhookURL, // In Telegram case, WebhookURL field stores the chat ID
+		ChatID:                t.Bot.WebhookURL,
 		Text:                  formattedMessage,
-		ParseMode:             "HTML", // Use HTML parse mode to support formatted messages
-		DisableWebPagePreview: true,   // Prevent link previews for user mentions
+		ParseMode:             "HTML",
+		DisableWebPagePreview: true,
 	}
 
 	// Convert message to JSON
@@ -87,21 +102,17 @@ func (t *TelegramBot) Send(message string) error {
 
 	// Check if proxy is enabled in config
 	if viper.GetBool("proxy.enable") {
-		// Get proxy URL from config
 		proxyURLStr := viper.GetString("proxy.url")
 		if proxyURLStr == "" {
-			// Fallback to environment variable
 			proxyURLStr = os.Getenv("HTTP_PROXY")
 		}
 
 		if proxyURLStr != "" {
-			// Configure proxy
 			proxyURL, err := url.Parse(proxyURLStr)
 			if err != nil {
 				return fmt.Errorf("invalid proxy URL: %w", err)
 			}
 
-			// Set up proxy transport
 			transport := &http.Transport{
 				Proxy: http.ProxyURL(proxyURL),
 			}
@@ -110,6 +121,7 @@ func (t *TelegramBot) Send(message string) error {
 	}
 
 	// Send HTTP request
+	apiURL := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", t.Bot.Token)
 	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(msgBytes))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)

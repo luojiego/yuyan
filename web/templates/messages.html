@@ -319,6 +319,9 @@
       lengthChange: true,
       autoWidth: false,
       order: [[7, 'desc']], // 按创建时间降序排序
+      processing: true,
+      serverSide: false,  // 使用客户端处理
+      deferRender: true,  // 延迟渲染提高性能
       columns: [
         { data: 'id' },
         { data: 'bot.name', defaultContent: 'Unknown' },
@@ -329,11 +332,27 @@
         { data: 'status' },
         { data: 'created_at' },
         { data: null, defaultContent: '', orderable: false }
-      ]
+      ],
+      // 禁用自动刷新
+      searching: true,
+      info: true,
+      paging: true,
+      pageLength: 10,
+      stateSave: true  // 保存用户的表格状态
     });
     
     // 加载消息历史
     loadMessages();
+    
+    // 设置30秒自动刷新
+    let refreshInterval = setInterval(loadMessages, 30000);
+    
+    // 当用户离开页面时清除定时器
+    $(window).on('unload', function() {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    });
     
     // 加载机器人列表
     loadBots();
@@ -370,6 +389,13 @@
   
   // 加载消息历史
   function loadMessages() {
+    // 如果上一个请求还在进行中，就不发起新的请求
+    if (loadMessages.isLoading) {
+      return;
+    }
+    
+    loadMessages.isLoading = true;
+    
     $.ajax({
       url: '/api/messages',
       method: 'GET',
@@ -446,7 +472,11 @@
         updatePageLanguage();
       },
       error: function(xhr) {
+        console.error('Failed to load messages:', xhr);
         alert(__('error_occurred') + ': ' + (xhr.responseJSON ? xhr.responseJSON.error : __('unknown')));
+      },
+      complete: function() {
+        loadMessages.isLoading = false;
       }
     });
   }
